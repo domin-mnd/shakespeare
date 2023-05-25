@@ -8,9 +8,22 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
+  "prisma": {
+    "schema": "src/database/schema.prisma"
+  },
   "devDependencies": {
+    "@types/formidable": "^2.0.6",
     "@types/node": "^18",
     "less": "^4.1.3",
-    "nuxt": "^3.5.0"
+    "nuxt": "^3.5.0",
+    "prisma": "^4.14.1"
+  },
+  "dependencies": {
+    "@lucia-auth/adapter-prisma": "^2.0.0",
+    "@prisma/client": "^4.14.1",
+    "formidable": "^2.1.1",
+    "h3-formidable": "^0.3.2",
+    "lucia-auth": "^1.7.0",
+    "minio": "^7.1.0"
   }
 }

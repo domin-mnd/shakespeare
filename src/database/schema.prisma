@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AuthUser {
+  id           String        @id @unique
+  auth_session AuthSession[]
+  auth_key     AuthKey[]
+
+  name       String
+  avatar_url String
+  // An API key is automatically generated
+  // Using UUID for additional security
+  api_key    String @unique @default(uuid())
+
+  uploads Upload[]
+
+  @@map("auth_user")
+}
+
+model Upload {
+  id Int @id @default(autoincrement())
+
+  filename  String
+  mimetype  String
+  slug      String   @unique
+  size      Int
+  created_at DateTime @default(now()) @map("created_at")
+  views     Int      @default(0)
+  path      String   @unique
+
+  author   AuthUser @relation(fields: [authorId], references: [id])
+  authorId String
+}
+
+model AuthSession {
+  id             String   @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  auth_user      AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_session")
+}
+
+model AuthKey {
+  id              String   @id @unique
+  hashed_password String?
+  user_id         String
+  primary_key     Boolean
+  expires         BigInt?
+  auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_key")
+}

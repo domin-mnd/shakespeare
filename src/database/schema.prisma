@@ -16,7 +16,7 @@ model AuthUser {
   avatar_url String
   // An API key is automatically generated
   // Using UUID for additional security
-  api_key    String @unique @default(uuid())
+  api_key    String @unique @default(cuid())
 
   uploads Upload[]
 
@@ -26,13 +26,13 @@ model AuthUser {
 model Upload {
   id Int @id @default(autoincrement())
 
-  filename  String
-  mimetype  String
-  slug      String   @unique
-  size      Int
-  created_at DateTime @default(now()) @map("created_at")
-  views     Int      @default(0)
-  path      String   @unique
+  filepath   String
+  mimetype   String
+  slug       String   @unique
+  size       Int
+  created_at DateTime @default(now())
+  views      Int      @default(0)
+  path       String   @unique
 
   author   AuthUser @relation(fields: [authorId], references: [id])
   authorId String
@@ -49,6 +49,7 @@ model AuthSession {
   @@map("auth_session")
 }
 
+// Auth key only for lucia, api key is used for uploads
 model AuthKey {
   id              String   @id @unique
   hashed_password String?

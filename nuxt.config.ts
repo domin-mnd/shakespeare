@@ -2,8 +2,8 @@
 export default defineNuxtConfig({
   srcDir: "src/",
   alias: {
-    "$component": "/<rootDir>/components",
-    "$auth": "/<rootDir>/server/utils/auth.ts",
+    "#component": "./src/components",
+    "@utils": "./src/server/utils/index.ts",
   },
   nitro: {
     /** @see {@link https://lucia-auth.com/start-here/getting-started?nuxt Polyfill crypto global} */

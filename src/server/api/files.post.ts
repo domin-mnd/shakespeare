@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { shortener, readFiles } from "@/server/utils";
 import { FileWriteStreamHandler, uploadS3 } from "@/server/libs/uploader";
+import { inspect } from "node:util";
 
 // const prisma = new PrismaClient();
 
@@ -25,30 +26,27 @@ export default defineEventHandler(async (event) => {
   const filename = shortener(0, 4);
 
   // No busboy or multer :P
-  // Get files & fields via readFiles wrapper of formidable
+  // Get files via readFiles wrapper of formidable
   const files = await readFiles(event, {
     maxFiles: 1,
-    // fileWriteStreamHandler rebinds uploadS3 by adding volatile file to it
     // No createReadStream because of performance
-    fileWriteStreamHandler: uploadS3.bind(
-      null, filename
-    ) as unknown as FileWriteStreamHandler,
+    fileWriteStreamHandler: uploadS3(filename),
   });
 
   // ShareX happen to upload files 1 by 1 and for the sake of type safety separate files
   const file = Array.isArray(files) ? files[0] : files;
 
-  // Getting file extension according to the original file name that was uploaded
-  const fileExtension = file.originalFilename.split(".").pop();
+  console.log(inspect(file, false, null, true /* enable colors */))
 
-  console.log(file);
+  // Getting file extension according to the original file name that was uploaded
+  // const fileExtension = file.fdata.originalFilename.split(".").pop();
 
   // await prisma.upload.create({
   //   data: {
   //     filename,
-  //     mimetype: file.mimetype,
+  //     mimetype: file.fdata.mimetype,
   //     slug: `${filename}.${fileExtension}`,
-  //     size: file.size,
+  //     size: file.fdata.size,
 
   //   },
   // });

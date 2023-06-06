@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event);
-  const filename = url.searchParams.get("filename");
+  const filename = url.searchParams.get("q");
 
   if (!filename)
     throw createError({ statusCode: 400, statusMessage: "Bad Request" });
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
    * @see {@link https://stackoverflow.com/a/69461332/14301934 then-able implementation}
    */
   new Promise((resolve, reject) => {
-    // Add views
+    // Increment 1 view no matter what ip or smth
     prisma.upload
       .update({
         data: {

@@ -1,4 +1,4 @@
-import { resolvePath } from '@nuxt/kit';
+import { resolvePath } from "@nuxt/kit";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -9,5 +9,15 @@ export default defineNuxtConfig({
   },
   typescript: {
     strict: true,
+  },
+  modules: [
+    // Helmet & rate limiting
+    "nuxt-security",
+  ],
+  security: {
+    rateLimiter: {
+      tokensPerInterval: 240,
+      interval: "hour"
+    },
   },
 });

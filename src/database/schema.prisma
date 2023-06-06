@@ -20,13 +20,15 @@ model AuthUser {
 
   uploads Upload[]
 
+  // Faster query performance thus validation will take less time
+  @@index([api_key])
   @@map("auth_user")
 }
 
 model Upload {
   id Int @id @default(autoincrement())
 
-  filepath   String
+  filename   String   @unique
   mimetype   String
   slug       String   @unique
   size       Int
@@ -36,6 +38,9 @@ model Upload {
 
   author   AuthUser @relation(fields: [authorId], references: [id])
   authorId String
+
+  // Upload query performance response
+  @@index([filename])
 }
 
 model AuthSession {

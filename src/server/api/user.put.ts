@@ -106,7 +106,7 @@ export default defineEventHandler(async (event) => {
     ) {
       throw createError({
         statusCode: 400,
-        statusMessage: "Conflict: invalid userId",
+        statusMessage: "Bad Request: invalid userId",
       });
     } else {
       console.log(error);

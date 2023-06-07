@@ -1,8 +1,11 @@
 /// <reference types="lucia-auth" />
 
 declare namespace Lucia {
-  type Auth = import("./utils/auth.js").Auth;
+  type Auth = import("./utils/auth").Auth;
+  
   type UserAttributes = {
-    username: string;
+    nickname?: string;
+    avatar_url?: string;
+    role: import("@prisma/client").Role;
   };
 }

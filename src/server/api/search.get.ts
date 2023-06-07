@@ -3,12 +3,19 @@ import { PrismaClient } from "@prisma/client";
 // Keep client away from handler to avoid reinitialization
 const prisma = new PrismaClient();
 
+/**
+ * ## Get file by filename
+ * 
+ * Endpoint processes upload record
+ * asynchronously updates the view count
+ * & returns expanded ref object
+ */
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event);
   const filename = url.searchParams.get("q");
 
   if (!filename)
-    throw createError({ statusCode: 400, statusMessage: "Bad Request" });
+    throw createError({ statusCode: 400, statusMessage: "Bad Request: missing required parameter - q" });
 
   const upload = prisma.upload.findUnique({
     where: { filename },

@@ -7,16 +7,16 @@ const prisma = new PrismaClient();
 
 /**
  * ## File upload endpoint.
- * 
+ *
  * Algorithm divided into 4 parts: `validation`, `upload`, `initialization`, `creation`.
- * 
+ *
  * - `validation` - Validate if file is valid & user provides correct credentials.
  * API key is indexed, so it shouldn't be slow.
  * - `upload` - Upload process to S3 / Local storage. Is the fastest part as it is asynchronous.
- * - `initialization` - Await the upload instance, then retrieve all needed data for row creation.
- * - `creation` - Create row in database - SQL-only.
+ * - `initialization` - Await the upload instance, then retrieve all needed data for record creation.
+ * - `creation` - Create record in database - SQL-only.
  * Can't be done asynchronously because of `initialization` data needed.
- * 
+ *
  * @returns {string} Link to the file that ShareX needs, won't return any objects or something else.
  */
 export default defineEventHandler(async (event) => {
@@ -86,15 +86,17 @@ export default defineEventHandler(async (event) => {
       // The .code property can be accessed in a type-safe manner
       if (error.code === "P2002") {
         throw createError({
-          statusCode: 400,
-          statusMessage: "The file already exists in the database, reupload it via the client!",
+          statusCode: 409,
+          statusMessage:
+            "Conflict: file name already exists in the database, reupload it via the client!",
         });
       }
     } else {
+      console.log(error);
       throw createError({
         statusCode: 500,
-        statusMessage: "Handled File Creation Error",
-      })
+        statusMessage: "Internal Server Error: checkout console",
+      });
     }
   }
 

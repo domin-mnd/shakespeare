@@ -12,16 +12,17 @@ model AuthUser {
   auth_session AuthSession[]
   auth_key     AuthKey[]
 
-  name       String
-  avatar_url String
+  nickname   String?
+  avatar_url String?
+  role       Role    @default(USER)
   // An API key is automatically generated
   // Using UUID for additional security
-  api_key    String @unique @default(cuid())
+  api_key    String  @unique @default(cuid())
 
   uploads Upload[]
 
   // Faster query performance thus validation will take less time
-  @@index([api_key])
+  @@index([api_key, role])
   @@map("auth_user")
 }
 
@@ -41,6 +42,11 @@ model Upload {
 
   // Upload query performance response
   @@index([filename])
+}
+
+enum Role {
+  ADMIN
+  USER
 }
 
 model AuthSession {

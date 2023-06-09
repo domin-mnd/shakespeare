@@ -1,9 +1,7 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { prisma } from "@/server/libs/database";
 import { shortener, readFiles } from "@/server/utils";
 import { simpleStorageService } from "@/server/libs/storage";
-
-// Keep client away from handler to avoid reinitialization
-const prisma = new PrismaClient();
 
 /**
  * ## File upload endpoint.

@@ -1,23 +1,17 @@
-import { PrismaClient, Prisma } from "@prisma/client";
-import { shortener, readFiles } from "@/server/utils";
+import { prisma } from "@/server/libs/database";
 import { simpleStorageService } from "@/server/libs/storage";
 
-// Keep client away from handler to avoid reinitialization
-const prisma = new PrismaClient();
-
 /**
- * ## File upload endpoint.
+ * ## File deletion endpoint.
  *
- * Algorithm divided into 4 parts: `validation`, `upload`, `initialization`, `creation`.
+ * 3 steps for the deletion of the file: `validation`, `file deletion`, `record deletion`
  *
  * - `validation` - Validate if file is valid & user provides correct credentials.
  * API key is indexed, so it shouldn't be slow.
- * - `upload` - Upload process to S3 / Local storage. Is the fastest part as it is asynchronous.
- * - `initialization` - Await the upload instance, then retrieve all needed data for record creation.
- * - `creation` - Create record in database - SQL-only.
- * Can't be done asynchronously because of `initialization` data needed.
+ * - `file deletion` - Delete file from used storage library.
+ * - `record deletion` - Delete record in database - SQL-only.
  *
- * @returns {string} Link to the file that ShareX needs, won't return any objects or something else.
+ * @returns {string} Status & the SDK response in body key.
  */
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

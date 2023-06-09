@@ -41,7 +41,7 @@ model Upload {
   authorId String
 
   // Upload query performance response
-  @@index([filename])
+  @@index([filename, views])
 }
 
 enum Role {

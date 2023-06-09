@@ -1,9 +1,6 @@
 import { auth } from "@/server/utils";
 import { LuciaError } from "lucia-auth";
-import { PrismaClient } from "@prisma/client";
-
-// Keep client away from handler to avoid reinitialization
-const prisma = new PrismaClient();
+import { prisma } from "@/server/libs/database";
 
 /**
  * ## User attribute updates

@@ -1,7 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-// Keep client away from handler to avoid reinitialization
-const prisma = new PrismaClient();
+import { prisma } from "@/server/libs/database";
 
 /**
  * ## Get file by filename

@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   if (!filename)
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: missing required parameter - q",
+      statusMessage: "Bad Request: missing required parameter - filename",
     });
 
   const upload = await prisma.upload.findUnique({

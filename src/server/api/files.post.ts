@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { shortener, readFiles } from "@/server/utils";
-import { uploadS3 } from "@/server/libs/uploader";
+import { simpleStorageService } from "@/server/libs/storage";
 
 // Keep client away from handler to avoid reinitialization
 const prisma = new PrismaClient();
@@ -25,23 +25,23 @@ export default defineEventHandler(async (event) => {
   const contentType = getRequestHeader(event, "content-type");
 
   if (!contentType?.includes("multipart/form-data"))
-    throw createError({ statusCode: 400, statusMessage: "Bad Request" });
+    throw createError({ statusCode: 400, statusMessage: "Bad Request: non multipart/form-data not allowed" });
 
   if (!apikey)
-    throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+    throw createError({ statusCode: 401, statusMessage: "Unauthorized: missing apikey authorization header" });
 
   const user = await prisma.authUser.findUnique({
     where: { api_key: apikey },
   });
 
   if (!user)
-    throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+    throw createError({ statusCode: 401, statusMessage: "Unauthorized: invalid credentials" });
 
   // Define custom filename with custom settings
   const filename = shortener(0, 4);
 
   // Upload to S3 instance
-  const instance = uploadS3(filename);
+  const instance = simpleStorageService(filename);
 
   // No busboy or multer :P
   // Get files via readFiles wrapper of formidable
@@ -95,7 +95,7 @@ export default defineEventHandler(async (event) => {
       console.log(error);
       throw createError({
         statusCode: 500,
-        statusMessage: "Internal Server Error: checkout console",
+        statusMessage: "Internal Server Error: check console",
       });
     }
   }

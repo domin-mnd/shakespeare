@@ -52,11 +52,6 @@ export default defineEventHandler(async (event) => {
 
   try {
     await auth.deleteUser(userId);
-
-    return {
-      statusCode: 200,
-      statusMessage: "OK",
-    };
   } catch (error) {
     if (
       error instanceof LuciaError &&
@@ -70,8 +65,13 @@ export default defineEventHandler(async (event) => {
       console.log(error);
       throw createError({
         statusCode: 500,
-        statusMessage: "Internal Server Error: checkout console",
+        statusMessage: "Internal Server Error: check console",
       });
     }
   }
+
+  return {
+    statusCode: 200,
+    statusMessage: "OK",
+  };
 });

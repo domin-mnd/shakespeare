@@ -112,7 +112,7 @@ export default defineEventHandler(async (event) => {
       console.log(error);
       throw createError({
         statusCode: 500,
-        statusMessage: "Internal Server Error: checkout console",
+        statusMessage: "Internal Server Error: check console",
       });
     }
   }

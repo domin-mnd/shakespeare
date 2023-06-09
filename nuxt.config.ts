@@ -17,7 +17,14 @@ export default defineNuxtConfig({
   security: {
     rateLimiter: {
       tokensPerInterval: 240,
-      interval: "hour"
+      interval: "hour",
+    },
+  },
+  routeRules: {
+    "/api/files": {
+      security: {
+        xssValidator: false
+      },
     },
   },
 });

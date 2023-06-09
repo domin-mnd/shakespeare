@@ -39,6 +39,7 @@ export default defineEventHandler(async (event) => {
 
   const user = await prisma.authUser.findUnique({
     where: { api_key: apikey },
+    select: { id: true, role: true },
   });
 
   if (!user || (user?.role !== "ADMIN" && user?.id !== userId))

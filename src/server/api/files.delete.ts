@@ -23,6 +23,7 @@ export default defineEventHandler(async (event) => {
 
   const user = await prisma.authUser.findUnique({
     where: { api_key: apikey },
+    select: { id: true, role: true },
   });
 
   if (!user)
@@ -39,6 +40,7 @@ export default defineEventHandler(async (event) => {
 
   const file = await prisma.upload.findUnique({
     where: { slug: filename },
+    select: { authorId: true },
   });
 
   if (!file)

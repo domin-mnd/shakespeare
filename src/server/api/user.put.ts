@@ -40,6 +40,7 @@ export default defineEventHandler(async (event) => {
 
   const user = await prisma.authUser.findUnique({
     where: { api_key: apikey },
+    select: { id: true, role: true },
   });
 
   if (!user || (user?.role !== "ADMIN" && user?.id !== userId))
@@ -86,10 +87,10 @@ export default defineEventHandler(async (event) => {
   };
 
   try {
-    const user = await auth.updateUserAttributes(userId, partialUserAttributes);
+    const updatedUser = await auth.updateUserAttributes(userId, partialUserAttributes);
 
-    await auth.invalidateAllUserSessions(user.userId);
-    const session = await auth.createSession(user.userId);
+    await auth.invalidateAllUserSessions(updatedUser.userId);
+    const session = await auth.createSession(updatedUser.userId);
 
     return {
       statusCode: 200,

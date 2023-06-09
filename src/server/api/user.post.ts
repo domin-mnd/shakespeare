@@ -24,6 +24,7 @@ export default defineEventHandler(async (event) => {
 
   const user = await prisma.authUser.findUnique({
     where: { api_key: apikey },
+    select: { role: true },
   });
 
   if (!user?.role || user.role !== "ADMIN")
@@ -69,7 +70,7 @@ export default defineEventHandler(async (event) => {
     });
 
   try {
-    const user = await auth.createUser({
+    const newUser = await auth.createUser({
       primaryKey: {
         providerId: "username",
         providerUserId: username,
@@ -86,7 +87,7 @@ export default defineEventHandler(async (event) => {
     return {
       statusCode: 201,
       statusMessage: "Created",
-      body: user,
+      body: newUser,
     };
   } catch (error) {
     if (

@@ -2,7 +2,7 @@ import { prisma } from "@/server/libs/database";
 
 /**
  * ## Get file by filename
- * 
+ *
  * Endpoint processes Upload record
  * asynchronously updates the view count
  * & returns expanded ref object
@@ -12,16 +12,18 @@ export default defineEventHandler(async (event) => {
   const filename = url.searchParams.get("filename");
 
   if (!filename)
-    throw createError({ statusCode: 400, statusMessage: "Bad Request: missing required parameter - q" });
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Bad Request: missing required parameter - q",
+    });
 
-  const upload = prisma.upload.findUnique({
+  const upload = await prisma.upload.findUnique({
     where: { filename },
     include: { author: true },
   });
 
-  const data = await upload;
-
-  if (!data) throw createError({ statusCode: 404, statusMessage: "Not Found" });
+  if (!upload)
+    throw createError({ statusCode: 404, statusMessage: "Not Found" });
 
   /**
    * prisma query calls are then-able so we wrap it with Promise
@@ -34,18 +36,18 @@ export default defineEventHandler(async (event) => {
         data: {
           views: { increment: 1 },
         },
-        where: { id: data.id },
+        where: { id: upload.id },
       })
       .then(resolve)
       .catch(reject);
   });
 
   return {
-    ...data,
+    ...upload,
     // Remove authorId as unnecessary
     authorId: undefined,
     author: {
-      ...data.author,
+      ...upload.author,
       // Remove api_key & role for secure purposes
       api_key: undefined,
       role: undefined,

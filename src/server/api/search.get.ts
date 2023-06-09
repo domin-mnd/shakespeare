@@ -1,54 +1,59 @@
 import { prisma } from "@/server/libs/database";
 
 /**
- * ## Get file by filename
- * 
+ * ## Get files by similar filename
+ *
  * Endpoint processes upload record
- * asynchronously updates the view count
- * & returns expanded ref object
+ * & returns expanded mapped ref object
  */
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event);
   const filename = url.searchParams.get("q");
+  // Checkout cuid API key, authorization header key for every user
+  const apikey = getRequestHeader(event, "authorization");
 
-  if (!filename)
-    throw createError({ statusCode: 400, statusMessage: "Bad Request: missing required parameter - q" });
+  if (!apikey)
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized: missing apikey authorization header",
+    });
 
-  const upload = prisma.upload.findUnique({
-    where: { filename },
+  const user = await prisma.authUser.findUnique({
+    where: { api_key: apikey },
   });
 
-  const data = await upload;
+  if (!user)
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized: invalid credentials",
+    });
 
-  if (!data) throw createError({ statusCode: 404, statusMessage: "Not Found" });
+  const condition =
+    user.role === "ADMIN"
+      ? {}
+      : {
+          authorId: user.id,
+        };
 
-  const author = await upload.author();
-
-  /**
-   * prisma query calls are then-able so we wrap it with Promise
-   * @see {@link https://stackoverflow.com/a/69461332/14301934 then-able implementation}
-   */
-  new Promise((resolve, reject) => {
-    // Increment 1 view no matter what ip or smth
-    prisma.upload
-      .update({
-        data: {
-          views: { increment: 1 },
-        },
-        where: { id: data.id },
-      })
-      .then(resolve)
-      .catch(reject);
+  const upload = await prisma.upload.findMany({
+    where: {
+      filename: {
+        contains: filename ?? "",
+      },
+      ...condition,
+    },
+    include: { author: true },
   });
 
-  return {
-    ...data,
+  return upload.map((file) => ({
+    ...file,
     // Remove authorId as unnecessary
     authorId: undefined,
     author: {
-      ...author,
-      // Remove api_key for secure purposes
+      ...file.author,
+      // Remove api_key & role for secure purposes
       api_key: undefined,
+      role: undefined,
     },
-  };
+  }));
 });

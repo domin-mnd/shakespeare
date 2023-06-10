@@ -6,9 +6,16 @@ import { prisma } from "@/server/libs/database";
  * Endpoint processes upload record
  * & returns expanded mapped ref object
  */
-export default defineEventHandler(async (event) => {
+export default defineEventHandler<SearchResponse>(async (event) => {
   const url = getRequestURL(event);
-  const filename = url.searchParams.get("q");
+  // Array size for search
+  const quantity = url.searchParams.get("quantity") ?? 30;
+  /**
+   * @see {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination}
+   */
+  const page = url.searchParams.get("page") ?? 1;
+  // Filename query
+  const filename = url.searchParams.get("query") ?? "";
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");
 
@@ -37,9 +44,11 @@ export default defineEventHandler(async (event) => {
         };
 
   const upload = await prisma.upload.findMany({
+    skip: (+page - 1) * +quantity,
+    take: +quantity,
     where: {
       filename: {
-        contains: filename ?? "",
+        contains: filename,
       },
       ...condition,
     },

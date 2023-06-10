@@ -12,7 +12,7 @@ import { prisma } from "@/server/libs/database";
  * - Update the record attributes in database via lucia-auth & invalidate sessions
  * - Handle conflict error
  */
-export default defineEventHandler(async (event) => {
+export default defineEventHandler<UpdateUserResponse>(async (event) => {
   const body = await readBody(event);
   const apikey = getRequestHeader(event, "authorization");
 
@@ -95,7 +95,7 @@ export default defineEventHandler(async (event) => {
     return {
       statusCode: 200,
       statusMessage: "OK",
-      body: session,
+      session,
     };
   } catch (error) {
     if (

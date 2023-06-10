@@ -1,32 +1,10 @@
-import { PassThrough, Writable } from "node:stream";
-import type VolatileFile from "formidable/VolatileFile";
+import { PassThrough } from "node:stream";
 import type { File } from "formidable";
 
-import type {
-  AbortMultipartUploadCommandOutput,
-  CompleteMultipartUploadCommandOutput,
-  DeleteObjectCommandOutput,
-} from "@aws-sdk/client-s3";
+import type { DeleteObjectCommandOutput } from "@aws-sdk/client-s3";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 // Although @aws-sdk/client-s3 supports uploads, you need @aws-sdk/lib-storage to support Readable streams.
 import { Upload } from "@aws-sdk/lib-storage";
-
-/** A simplified type for handling file writes */
-export type FileWriteStreamHandler = (file?: VolatileFile) => Writable;
-/** Results of uploading */
-export type Results =
-  | AbortMultipartUploadCommandOutput
-  | CompleteMultipartUploadCommandOutput;
-/** A simplified type for receiving contents of the upload */
-export type Contents = () => Promise<Results>;
-/** A simplified type for file deletion */
-export type Delete = () => Promise<DeleteObjectCommandOutput | null>;
-/** A function under which you can upload and call contents from it (for less-request purposes) */
-export interface Uploader {
-  upload: FileWriteStreamHandler;
-  delete: Delete;
-  contents: Contents;
-}
 
 // Handle environment variables
 // Deconstructing environment variables is not necessary
@@ -48,6 +26,12 @@ const client = new S3Client({
   region: process.env.S3_REGION,
 });
 
+/**
+ * Creates an uploader instance for uploading, deleting, and retrieving files from Amazon S3.
+ *
+ * @param {string} filename - The name of the file to be uploaded.
+ * @returns {Uploader} An uploader object with methods for uploading, deleting, and retrieving files from Amazon S3.
+ */
 export function simpleStorageService(filename: string): Uploader {
   // The instance of upload to get the file without additional remote calls
   let upload: Upload;

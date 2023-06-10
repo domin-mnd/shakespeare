@@ -1,5 +1,3 @@
-import { auth } from "@/server/utils";
-import { LuciaError } from "lucia-auth";
 import { prisma } from "@/server/libs/database";
 
 /**
@@ -8,9 +6,12 @@ import { prisma } from "@/server/libs/database";
  * Validates the caller user, then returns
  * the user found by the username body parameter
  */
-export default defineEventHandler(async (event) => {
+export default defineEventHandler<GetUserResponse>(async (event) => {
   const url = getRequestURL(event);
+  // Username
   const username = url.searchParams.get("username");
+  // Amount of uploads to return
+  const quantity = url.searchParams.get("quantity") ?? 15;
   const apikey = getRequestHeader(event, "authorization");
 
   if (!apikey)
@@ -41,12 +42,20 @@ export default defineEventHandler(async (event) => {
   const user = await prisma.authKey.findUnique({
     // Single auth type therefore it is needed to prepend username:
     where: { id: `username:${username}` },
-    include: {
+    select: {
       auth_user: {
-        include: {
-          uploads: true,
-        }
-      }
+        select: {
+          id: true,
+          nickname: true,
+          avatar_url: true,
+          uploads: {
+            take: +quantity,
+            orderBy: {
+              created_at: "desc",
+            }
+          },
+        },
+      },
     },
   });
 
@@ -56,9 +65,5 @@ export default defineEventHandler(async (event) => {
       statusMessage: "Not Found",
     });
 
-  return {
-    ...user.auth_user,
-    api_key: undefined,
-    role: undefined,
-  }
+  return user.auth_user;
 });

@@ -13,7 +13,7 @@ import { simpleStorageService } from "@/server/libs/storage";
  *
  * @returns {string} Status & the SDK response in body key.
  */
-export default defineEventHandler(async (event) => {
+export default defineEventHandler<DeleteFileResponse>(async (event) => {
   const body = await readBody(event);
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");

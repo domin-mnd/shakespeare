@@ -12,7 +12,7 @@ import { prisma } from "@/server/libs/database";
  * - Create the record in database via lucia-auth
  * - Handle conflict error
  */
-export default defineEventHandler(async (event) => {
+export default defineEventHandler<CreateUserResponse>(async (event) => {
   const body = await readBody(event);
   const apikey = getRequestHeader(event, "authorization");
 
@@ -84,10 +84,15 @@ export default defineEventHandler(async (event) => {
       },
     });
 
+    const session = await auth.createSession(newUser.userId);
+
     return {
       statusCode: 201,
       statusMessage: "Created",
-      body: newUser,
+      body: {
+        id: newUser.userId,
+        session: session,
+      },
     };
   } catch (error) {
     if (

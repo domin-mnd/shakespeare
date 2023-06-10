@@ -17,7 +17,7 @@ import { simpleStorageService } from "@/server/libs/storage";
  *
  * @returns {string} Link to the file that ShareX needs, won't return any objects or something else.
  */
-export default defineEventHandler(async (event) => {
+export default defineEventHandler<CreateFileResponse>(async (event) => {
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");
   const contentType = getRequestHeader(event, "content-type");

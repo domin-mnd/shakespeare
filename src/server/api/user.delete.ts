@@ -11,7 +11,7 @@ import { prisma } from "@/server/libs/database";
  * - Delete the record in database via lucia-auth
  * - Handle conflict error
  */
-export default defineEventHandler(async (event) => {
+export default defineEventHandler<DeleteUserResponse>(async (event) => {
   const body = await readBody(event);
   const apikey = getRequestHeader(event, "authorization");
 

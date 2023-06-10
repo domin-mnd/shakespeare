@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/server/libs/database";
 import { shortener, readFiles } from "@/server/utils";
+import { ShorteningType } from "@/server/libs/constants";
 import { simpleStorageService } from "@/server/libs/storage";
 
 /**
@@ -18,15 +19,24 @@ import { simpleStorageService } from "@/server/libs/storage";
  * @returns {string} Link to the file that ShareX needs, won't return any objects or something else.
  */
 export default defineEventHandler<CreateFileResponse>(async (event) => {
+  const url = getRequestURL(event);
+  const shortenerTypeConfig = url.searchParams.get("type");
+  const shortenerLengthConfig = url.searchParams.get("length");
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");
   const contentType = getRequestHeader(event, "content-type");
 
   if (!contentType?.includes("multipart/form-data"))
-    throw createError({ statusCode: 400, statusMessage: "Bad Request: non multipart/form-data not allowed" });
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Bad Request: non multipart/form-data not allowed",
+    });
 
   if (!apikey)
-    throw createError({ statusCode: 401, statusMessage: "Unauthorized: missing apikey authorization header" });
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized: missing apikey authorization header",
+    });
 
   const user = await prisma.authUser.findUnique({
     where: { api_key: apikey },
@@ -34,10 +44,35 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
   });
 
   if (!user)
-    throw createError({ statusCode: 401, statusMessage: "Unauthorized: invalid credentials" });
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized: invalid credentials",
+    });
+
+  // Enum type of shortening
+  let shorteningType: ShorteningType | string =
+    shortenerTypeConfig ?? ShorteningType.Classic;
+
+  // Await the body after the user is validated
+  switch (shortenerTypeConfig) {
+    case "classic":
+      shorteningType = ShorteningType.Classic;
+      break;
+    case "numbers":
+      shorteningType = ShorteningType.Numbers;
+      break;
+    case "pronounceable":
+      shorteningType = ShorteningType.Pronounceable;
+  }
 
   // Define custom filename with custom settings
-  const filename = shortener(0, 4);
+  const filename = shortener(shorteningType, +(shortenerLengthConfig ?? 4));
+
+  if (!filename)
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Bad Request: invalid filename",
+    });
 
   // Upload to S3 instance
   const instance = simpleStorageService(filename);

@@ -1,4 +1,4 @@
-import { ShorteningType, classic, numbers, emojis } from "@/server/libs/constants";
+import { ShorteningType, classic, numbers } from "@/server/libs/constants";
 import { word } from "slova";
 
 /**
@@ -30,8 +30,6 @@ export function shortener(type: ShorteningType | string, length: number = 4): st
   switch (type) {
     case ShorteningType.Classic:
       return shuffler(classic, length);
-    case ShorteningType.Emoji:
-      return shuffler(emojis, length);
     case ShorteningType.Pronounceable:
       if (length < 3)
         throw "Length must be at least 3 characters.";

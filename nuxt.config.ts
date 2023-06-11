@@ -19,11 +19,22 @@ export default defineNuxtConfig({
       tokensPerInterval: 240,
       interval: "hour",
     },
+    corsHandler: false,
   },
   routeRules: {
     "/api/files": {
       security: {
-        xssValidator: false
+        xssValidator: false,
+      },
+    },
+  },
+  vite: {
+    css: {
+      preprocessorOptions: {
+        // Alias doesn't work and idk why ¯\_(ツ)_/¯
+        stylus: {
+          additionalData: `@import "${__dirname}/src/assets/styles/theme/*.styl"`,
+        },
       },
     },
   },

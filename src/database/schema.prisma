@@ -29,19 +29,27 @@ model AuthUser {
 model Upload {
   id Int @id @default(autoincrement())
 
-  filename   String   @unique
+  filename   String     @unique
   mimetype   String
-  slug       String   @unique
+  slug       String     @unique
   size       Int
-  created_at DateTime @default(now())
-  views      Int      @default(0)
-  path       String   @unique
+  created_at DateTime   @default(now())
+  views      Int        @default(0)
+  path       String     @unique
+  type       UploadType
 
   author   AuthUser @relation(fields: [authorId], references: [id])
   authorId String
 
   // Upload query performance response
   @@index([filename, views])
+}
+
+enum UploadType {
+  IMAGE
+  FILE
+  URL
+  TEXT
 }
 
 enum Role {

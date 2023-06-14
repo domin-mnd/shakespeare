@@ -1,69 +1,40 @@
 import { prisma } from "@/server/libs/database";
+import { auth } from "@/server/utils/auth";
 
 /**
- * ## Get user by its username
+ * ## Validate user via lucia-auth
  *
  * Validates the caller user, then returns
- * the user found by the username body parameter
+ * the userId validated by lucia-auth,
+ * also returns whether any users are registered.
+ * 
+ * @see {@link https://github.com/pilcrowOnPaper/lucia/blob/main/examples/nuxt/server/api/user.get.ts Example}
  */
 export default defineEventHandler<GetUserResponse>(async (event) => {
-  const url = getRequestURL(event);
-  // Username
-  const username = url.searchParams.get("username");
-  // Amount of uploads to return
-  const quantity = url.searchParams.get("quantity") ?? 15;
-  const apikey = getRequestHeader(event, "authorization");
+  const authRequest = auth.handleRequest(event);
+	const { user } = await authRequest.validateUser();
+  let status = {
+    statusCode: 200,
+    statusMessage: "OK",
+  }
 
-  if (!apikey)
-    throw createError({
+  /**
+   * Checks whether any users exist
+   * @see {@link https://github.com/prisma/prisma/issues/5022#issuecomment-1033631629 Prisma exists alternative}
+   */
+  const usersExist = await prisma.authUser
+    .findMany({
+      select: { id: true }, // this line might not be necessary
+      take: 1  // this is the important bit, do not check through all the records
+    })
+    .then(r => r.length > 0);
+
+  // Validate response data
+  if (!user?.userId)
+    status = {
       statusCode: 401,
-      statusMessage: "Unauthorized: missing required header - authorization",
-    });
-
-  // Validate required data
-  if (!username)
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Bad Request: missing required key - username",
-    });
-
-  const caller = await prisma.authUser.findUnique({
-    where: { api_key: apikey },
-    select: { id: true },
-  });
-
-  if (!caller)
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized: invalid credentials",
-    });
-
-  // auth.getUser() requires userId, not username
-  const user = await prisma.authKey.findUnique({
-    // Single auth type therefore it is needed to prepend username:
-    where: { id: `username:${username}` },
-    select: {
-      auth_user: {
-        select: {
-          id: true,
-          nickname: true,
-          avatar_url: true,
-          uploads: {
-            take: +quantity,
-            orderBy: {
-              created_at: "desc",
-            }
-          },
-        },
-      },
-    },
-  });
-
-  if (!user)
-    throw createError({
-      statusCode: 404,
-      statusMessage: "Not Found",
-    });
-
-  return user.auth_user;
+      statusMessage: "Unauthorized",
+    }
+	
+  return { user, usersExist, ...status };
 });

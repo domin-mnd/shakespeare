@@ -1,11 +1,23 @@
 /**
  * ### GET `/api/user` success response
- * 
+ *
+ * @see {@link https://lucia-auth.com/basics/handle-requests?nuxt Handle Requests}
+ */
+interface GetUserResponse extends DefaultResponse {
+  user: {
+    userId: string;
+  } | null;
+  usersExist: boolean;
+}
+
+/**
+ * ### GET `/api/users` success response
+ *
  * @header Authorization
  * @param {string} username - User username (not nickname)
  * @param {string} quantity - Amount of uploads to return from that user, defaults to 15
  */
-interface GetUserResponse {
+interface GetUsersResponse {
   /** User ID */
   id: string;
   /** User Nickname, can be null */
@@ -18,7 +30,7 @@ interface GetUserResponse {
 
 /**
  * ### POST `/api/user` success response
- * 
+ *
  * @header Authorization
  * @prop {string} username - Permanent username for the user
  * @prop {string} password - User password
@@ -38,7 +50,7 @@ interface CreateUserResponse extends DefaultResponse {
 
 /**
  * ### PUT `/api/user` success response
- * 
+ *
  * @header Authorization
  * @prop {string} userId - User's ID to delete
  * @prop {string?} nickname - Nickname to change
@@ -52,7 +64,7 @@ interface UpdateUserResponse extends DefaultResponse {
 
 /**
  * ### DELETE `/api/user` success response
- * 
+ *
  * @header Authorization
  * @prop {string} userId - User's ID to delete
  */

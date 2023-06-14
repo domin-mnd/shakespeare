@@ -6,7 +6,7 @@ definePageMeta({
 <template>
   <div>
     <NuxtLayout name="client">
-      6
+      7
     </NuxtLayout>
   </div>
 </template>

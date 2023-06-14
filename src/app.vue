@@ -3,10 +3,6 @@
     <NuxtPage />
   </NuxtLayout>
 </template>
-<script lang="ts" setup>
-// Now I need to find whether AuthUser has records or not
-// SSG & revalidation /shrug
-</script>
 <style lang="stylus">
 // Import Manrope manually because @import fails to access src
 // @import "@fontsource-variable/manrope/index.css"

@@ -1,14 +1,17 @@
 <template>
-  <div id="wrapper">
-    <aside id="toolbar">// icons in the toolbar</aside>
-    <main id="content">
+  <LayoutWrapper>
+    <div id="float">
+      <LayoutNavbar />
+    </div>
+    <LayoutMain>
       <slot />
-    </main>
-  </div>
+    </LayoutMain>
+  </LayoutWrapper>
 </template>
 <style lang="stylus" scoped>
-  #wrapper
-    display flex
-    justify-content center
-    background-color background
+#float > *
+  transform translateX(-100%)
+
+  @media screen and (max-width 950px)
+    transform unset
 </style>

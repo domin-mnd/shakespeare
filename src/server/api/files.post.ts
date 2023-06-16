@@ -113,6 +113,7 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
         size: file.fdata.size,
         path: contents.Location as string,
         authorId: user.id,
+        type: "FILE",
       },
     });
   } catch (error) {

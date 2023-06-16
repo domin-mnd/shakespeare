@@ -7,15 +7,19 @@ useHead({
 });
 </script>
 <template>
-  <LayoutWrapper>
+  <LayoutWrapper class="direction">
     <LayoutMain class="center">
       <slot />
     </LayoutMain>
   </LayoutWrapper>
 </template>
 <style lang="stylus" scoped>
+.direction
+  flex-direction column
 .center
   display flex
+  margin auto
+  padding ss-xl-24 0
   justify-content center
-  align-items center
+  flex-direction column
 </style>

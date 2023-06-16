@@ -43,6 +43,7 @@ model Upload {
 
   // Upload query performance response
   @@index([filename, views])
+  @@map("upload")
 }
 
 enum UploadType {

@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-const { label, position, withArrow } = defineProps([
+const { label, position, withArrow, dontShowOnHover, show } = defineProps([
   "label",
   "position",
   "withArrow",
+  "dontShowOnHover",
+  "show"
 ]);
 
 const displayArrow = withArrow !== undefined ? 1 : 0;
 </script>
 <template>
   <div class="tooltip-wrapper" :data-position="position ?? 'top'">
-    <div class="tooltip-content">
+    <div class="tooltip-content" :class="{ hoverable: dontShowOnHover === undefined, active: show }">
       <div class="tooltip" role="tooltip">{{ label }}</div>
       <div class="arrow"></div>
     </div>
@@ -20,7 +22,6 @@ const displayArrow = withArrow !== undefined ? 1 : 0;
 .tooltip-wrapper
   display flex
   position relative
-  width max-content
 
   .tooltip-content
     pointer-events none
@@ -33,13 +34,17 @@ const displayArrow = withArrow !== undefined ? 1 : 0;
     transition opacity .3s ease
     opacity 0
 
-  &:hover .tooltip-content
+    &.active
+      transition opacity .3s ease
+      opacity 1
+
+  &:hover .tooltip-content.hoverable
     transition opacity .3s ease
     opacity 1
 
   .tooltip
     width max-content
-    max-width 190px
+    max-width 80vw
     padding ss-sm-10 ss-md-12
 
     border-radius rs-md-6

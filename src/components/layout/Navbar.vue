@@ -73,6 +73,8 @@ const links = [
     justify-content center
     flex-direction row
 
+    width 100vw
+
   @media screen and (max-width 350px)
     justify-content start
 

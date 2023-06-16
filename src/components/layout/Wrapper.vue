@@ -9,8 +9,9 @@
   justify-content center
   background-color cs-background
 
-  height 100vh
+  min-height 100vh
 
   @media screen and (max-width 950px)
     flex-direction column-reverse
+    align-items center
 </style>

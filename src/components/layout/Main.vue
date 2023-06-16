@@ -6,7 +6,7 @@
 <style lang="stylus" scoped>
 #content
   width 100%
-  height 100%
+  flex-grow 1
   max-width 600px
 
   padding-left ss-xl-25

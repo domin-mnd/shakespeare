@@ -7,31 +7,42 @@ import { prisma } from "@/server/libs/database";
  *
  * Endpoint processes 2 steps of validation & then handling record creation:
  *
- * - Validate an account that creates another user (must be ADMIN)
+ * - Validate an account that creates another user (must be ADMIN) (only if there are account records)
  * - Validate parameters & keys for creation
  * - Create the record in database via lucia-auth
  * - Handle conflict error
  */
 export default defineEventHandler<CreateUserResponse>(async (event) => {
   const body = await readBody(event);
-  const apikey = getRequestHeader(event, "authorization");
 
-  if (!apikey)
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized: missing required header - authorization",
+  const usersExist = await prisma.authUser
+    .findMany({
+      select: { id: true }, // this line might not be necessary
+      take: 1, // this is the important bit, do not check through all the records
+    })
+    .then((r) => r.length > 0);
+
+  // Do not do authorization validation if there are no users registered yet
+  if (!usersExist) {
+    const apikey = getRequestHeader(event, "authorization");
+
+    if (!apikey)
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Unauthorized: missing required header - authorization",
+      });
+
+    const user = await prisma.authUser.findUnique({
+      where: { api_key: apikey },
+      select: { role: true },
     });
 
-  const user = await prisma.authUser.findUnique({
-    where: { api_key: apikey },
-    select: { role: true },
-  });
-
-  if (!user?.role || user.role !== "ADMIN")
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized: invalid role for the given token",
-    });
+    if (!user?.role || user.role !== "ADMIN")
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Unauthorized: invalid role for the given token",
+      });
+  }
 
   // Required keys
   const username = body.username;

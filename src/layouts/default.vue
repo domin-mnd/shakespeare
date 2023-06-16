@@ -8,9 +8,9 @@ const { data } = await useFetch("/api/user");
 
 if (!data.value) throw createError("Failed to fetch data");
 
-if (!data.value.user) {
-  if (!data.value.usersExist) await navigateTo("/register");
-  else await navigateTo("/login");
+if (!data.value?.userId) {
+  // if (!data.value.usersExist) await navigateTo("/register");
+  // else await navigateTo("/login");
 }
 </script>
 <template>

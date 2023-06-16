@@ -4,9 +4,7 @@
  * @see {@link https://lucia-auth.com/basics/handle-requests?nuxt Handle Requests}
  */
 interface GetUserResponse extends DefaultResponse {
-  user: {
-    userId: string;
-  } | null;
+  userId?: string;
   usersExist: boolean;
 }
 

@@ -13,10 +13,6 @@ import { auth } from "@/server/utils/auth";
 export default defineEventHandler<GetUserResponse>(async (event) => {
   const authRequest = auth.handleRequest(event);
 	const { user } = await authRequest.validateUser();
-  let status = {
-    statusCode: 200,
-    statusMessage: "OK",
-  }
 
   /**
    * Checks whether any users exist
@@ -29,12 +25,10 @@ export default defineEventHandler<GetUserResponse>(async (event) => {
     })
     .then(r => r.length > 0);
 
-  // Validate response data
-  if (!user?.userId)
-    status = {
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-    }
-	
-  return { user, usersExist, ...status };
+  return {
+    userId: user?.userId,
+    usersExist,
+    statusCode: 200,
+    statusMessage: "OK",
+  };
 });

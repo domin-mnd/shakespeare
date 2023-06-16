@@ -23,7 +23,7 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
     .then((r) => r.length > 0);
 
   // Do not do authorization validation if there are no users registered yet
-  if (!usersExist) {
+  if (usersExist) {
     const apikey = getRequestHeader(event, "authorization");
 
     if (!apikey)
@@ -77,8 +77,37 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage:
-        "Bad Request: missing required keys - username and password",
+        "Bad Request: missing required keys - username or password",
     });
+
+  // Validate username
+  if (username.length < 3)
+    throw createError({
+      statusCode: 400,
+      statusMessage:
+        "Bad Request: username should be at least 3 characters long",
+    });
+  if (username.length > 20)
+    throw createError({
+      statusCode: 400,
+      statusMessage:
+        "Bad Request: username should be at most 20 characters long",
+    });
+  if (!/^[a-z0-9_]+$/.test(username))
+    throw createError({
+      statusCode: 400,
+      statusMessage:
+        "Bad Request: username should be lowercase and can only include latin characters, numbers & underscore",
+    });
+  
+  // Validate password
+  if (password.length < 4) {
+    throw createError({
+      statusCode: 400,
+      statusMessage:
+        "Bad Request: password should be at least 4 characters long",
+    });
+  }
 
   try {
     const newUser = await auth.createUser({
@@ -96,13 +125,21 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
     });
 
     const session = await auth.createSession(newUser.userId);
+    const cookie = auth.createSessionCookie(session).serialize();
+    setHeader(event, "Set-Cookie", cookie);
+
+    const apikey = await prisma.authUser.findUnique({
+      where: { id: newUser.userId },
+      select: { api_key: true },
+    })
 
     return {
       statusCode: 201,
       statusMessage: "Created",
       body: {
         id: newUser.userId,
-        session: session,
+        session,
+        apikey: apikey?.api_key as string,
       },
     };
   } catch (error) {

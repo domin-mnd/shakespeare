@@ -91,6 +91,8 @@ export default defineEventHandler<UpdateUserResponse>(async (event) => {
 
     await auth.invalidateAllUserSessions(updatedUser.userId);
     const session = await auth.createSession(updatedUser.userId);
+    const cookie = auth.createSessionCookie(session).serialize();
+    setHeader(event, "Set-Cookie", cookie);
 
     return {
       statusCode: 200,

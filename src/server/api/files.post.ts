@@ -100,7 +100,7 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
   const file = Array.isArray(files) ? files[0] : files;
 
   // Getting file extension according to the original file name that was uploaded
-  const fileExtension = file.fdata.originalFilename.split(".").pop();
+  const fileExtension = file.media.originalFilename.split(".").pop();
 
   try {
     // I could make it not awaiting the upload
@@ -108,9 +108,9 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
     await prisma.upload.create({
       data: {
         filename,
-        mimetype: file.fdata.mimetype,
+        mimetype: file.media.mimetype,
         slug: `${filename}.${fileExtension}`,
-        size: file.fdata.size,
+        size: file.media.size,
         path: contents.Location as string,
         authorId: user.id,
         type: "FILE",

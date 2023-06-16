@@ -43,6 +43,8 @@ interface CreateUserResponse extends DefaultResponse {
     id: string;
     /** Lucia session for that user */
     session: import("lucia-auth").Session;
+    /** User's api_key to save */
+    apikey: string;
   };
 }
 

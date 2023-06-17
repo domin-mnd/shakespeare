@@ -19,23 +19,26 @@ export default defineEventHandler<UpdateUserResponse>(async (event) => {
   if (!apikey)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: missing required header - authorization",
+      statusMessage: "Unauthorized",
+      message: "Missing required header - authorization.",
     });
 
   // Required keys
-  const userId = body.userId;  
+  const userId = body.userId;
 
   // Validate required data
   if (!userId)
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: missing required key - userId",
+      statusMessage: "Bad Request",
+      message: "Missing required key - userId.",
     });
 
   if (typeof userId !== "string")
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: userId must be a string",
+      statusMessage: "Bad Request",
+      message: "userId must be a string.",
     });
 
   const user = await prisma.authUser.findUnique({
@@ -46,7 +49,8 @@ export default defineEventHandler<UpdateUserResponse>(async (event) => {
   if (!user || (user?.role !== "ADMIN" && user?.id !== userId))
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: invalid credentials",
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
     });
 
   // Validate attributes
@@ -59,25 +63,29 @@ export default defineEventHandler<UpdateUserResponse>(async (event) => {
   if (nickname !== "string" && nickname !== "undefined")
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: nickname isn't type of string",
+      statusMessage: "Bad Request",
+      message: "nickname isn't type of string.",
     });
 
   if (avatar_url !== "string" && avatar_url !== "undefined")
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: avatar_url isn't type of string",
+      statusMessage: "Bad Request",
+      message: "avatar_url isn't type of string.",
     });
 
   if (role !== "ADMIN" && role !== "USER" && typeof role !== "undefined")
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: role key value isn't acceptable",
+      statusMessage: "Bad Request",
+      message: "role key value isn't acceptable.",
     });
-  
+
   if (user?.id === userId && role === "ADMIN")
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: own role cannot be promoted to ADMIN",
+      statusMessage: "Bad Request",
+      message: "Own role cannot be promoted to ADMIN.",
     });
 
   const partialUserAttributes = {
@@ -87,7 +95,10 @@ export default defineEventHandler<UpdateUserResponse>(async (event) => {
   };
 
   try {
-    const updatedUser = await auth.updateUserAttributes(userId, partialUserAttributes);
+    const updatedUser = await auth.updateUserAttributes(
+      userId,
+      partialUserAttributes
+    );
 
     await auth.invalidateAllUserSessions(updatedUser.userId);
     const session = await auth.createSession(updatedUser.userId);
@@ -106,13 +117,15 @@ export default defineEventHandler<UpdateUserResponse>(async (event) => {
     ) {
       throw createError({
         statusCode: 400,
-        statusMessage: "Bad Request: invalid userId",
+        statusMessage: "Bad Request",
+        message: "Invalid userId.",
       });
     } else {
       console.log(error);
       throw createError({
         statusCode: 500,
-        statusMessage: "Internal Server Error: check console",
+        statusMessage: "Internal Server Error",
+        message: "An unknown error has occured. Please consider checking console output for more information.",
       });
     }
   }

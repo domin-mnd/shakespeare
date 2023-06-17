@@ -29,7 +29,8 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
     if (!apikey)
       throw createError({
         statusCode: 401,
-        statusMessage: "Unauthorized: missing required header - authorization",
+        statusMessage: "Unauthorized",
+        message: "Missing required header - authorization.",
       });
 
     const user = await prisma.authUser.findUnique({
@@ -40,7 +41,8 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
     if (!user?.role || user.role !== "ADMIN")
       throw createError({
         statusCode: 401,
-        statusMessage: "Unauthorized: invalid role for the given token",
+        statusMessage: "Unauthorized",
+        message: "Invalid role for the given token.",
       });
   }
 
@@ -58,54 +60,58 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
   if (nickname !== "string" && nickname !== "undefined")
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: nickname isn't type of string",
+      statusMessage: "Bad Request",
+      message: "nickname isn't type of string.",
     });
 
   if (avatar_url !== "string" && avatar_url !== "undefined")
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: avatar_url isn't type of string",
+      statusMessage: "Bad Request",
+      message: "avatar_url isn't type of string.",
     });
 
   if (role !== "ADMIN" && role !== "USER" && typeof role !== "undefined")
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: role key value isn't acceptable",
+      statusMessage: "Bad Request",
+      message: "role key value isn't acceptable.",
     });
 
   if (!username || !password)
     throw createError({
       statusCode: 400,
-      statusMessage:
-        "Bad Request: missing required keys - username or password",
+      statusMessage: "Bad Request",
+      message: "Missing required keys - username or password.",
     });
 
   // Validate username
   if (username.length < 3)
     throw createError({
       statusCode: 400,
-      statusMessage:
-        "Bad Request: username should be at least 3 characters long",
+      statusMessage: "Bad Request",
+      message: "Username should be at least 3 characters long.",
     });
   if (username.length > 20)
     throw createError({
       statusCode: 400,
-      statusMessage:
-        "Bad Request: username should be at most 20 characters long",
+      statusMessage: "Bad Request",
+      message: "Username should be at most 20 characters long.",
     });
   if (!/^[a-z0-9_]+$/.test(username))
     throw createError({
       statusCode: 400,
-      statusMessage:
-        "Bad Request: username should be lowercase and can only include latin characters, numbers & underscore",
+      statusMessage: "Bad Request",
+      message:
+        "Username should be lowercase and can only include latin characters, numbers & underscore.",
     });
-  
+
   // Validate password
   if (password.length < 4) {
     throw createError({
       statusCode: 400,
-      statusMessage:
-        "Bad Request: password should be at least 4 characters long",
+      statusMessage: "Bad Request",
+      message: "Password should be at least 4 characters long.",
     });
   }
 
@@ -131,7 +137,7 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
     const apikey = await prisma.authUser.findUnique({
       where: { id: newUser.userId },
       select: { api_key: true },
-    })
+    });
 
     return {
       statusCode: 201,
@@ -149,13 +155,15 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
     ) {
       throw createError({
         statusCode: 409,
-        statusMessage: "Conflict: username already exists",
+        statusMessage: "Conflict",
+        message: "Username already exists.",
       });
     } else {
       console.log(error);
       throw createError({
         statusCode: 500,
-        statusMessage: "Internal Server Error: check console",
+        statusMessage: "Internal Server Error",
+        message: "An unknown error has occured. Please consider checking console output for more information.",
       });
     }
   }

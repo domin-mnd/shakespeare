@@ -29,13 +29,15 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
   if (!contentType?.includes("multipart/form-data"))
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: non multipart/form-data not allowed",
+      statusMessage: "Bad Request",
+      message: "Non multipart/form-data not allowed.",
     });
 
   if (!apikey)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: missing apikey authorization header",
+      statusMessage: "Unauthorized",
+      message: "Missing apikey authorization header.",
     });
 
   const user = await prisma.authUser.findUnique({
@@ -46,7 +48,8 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
   if (!user)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: invalid credentials",
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
     });
 
   // Enum type of shortening
@@ -71,7 +74,8 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
   if (!filename)
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: invalid filename",
+      statusMessage: "Bad Request",
+      message: "Invalid filename.",
     });
 
   // Upload to S3 instance
@@ -93,7 +97,8 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
   if (!("Location" in contents))
     throw createError({
       statusCode: 500,
-      statusMessage: "Handled File Upload Error",
+      statusMessage: "Internal Server Error",
+      message: "Handled unknown file upload error. ¯\\_(ツ)_/¯",
     });
 
   // ShareX happen to upload files 1 by 1 and for the sake of type safety separate files
@@ -122,15 +127,17 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
       if (error.code === "P2002") {
         throw createError({
           statusCode: 409,
-          statusMessage:
-            "Conflict: file name already exists in the database, reupload it via the client!",
+          statusMessage: "Conflict",
+          message:
+            "File name already exists in the database, reupload it via the client!",
         });
       }
     } else {
       console.log(error);
       throw createError({
         statusCode: 500,
-        statusMessage: "Internal Server Error: check console",
+        statusMessage: "Internal Server Error",
+        message: "An unknown error has occured. Please consider checking console output for more information."
       });
     }
   }

@@ -17,14 +17,16 @@ export default defineEventHandler<GetUsersResponse>(async (event) => {
   if (!apikey)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: missing required header - authorization",
+      statusMessage: "Unauthorized",
+      message: "Missing required header - authorization.",
     });
 
   // Validate required data
   if (!username)
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: missing required key - username",
+      statusMessage: "Bad Request",
+      message: "Missing required key - username.",
     });
 
   const caller = await prisma.authUser.findUnique({
@@ -35,7 +37,8 @@ export default defineEventHandler<GetUsersResponse>(async (event) => {
   if (!caller)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: invalid credentials",
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
     });
 
   // auth.getUser() requires userId, not username
@@ -52,7 +55,7 @@ export default defineEventHandler<GetUsersResponse>(async (event) => {
             take: +quantity,
             orderBy: {
               created_at: "desc",
-            }
+            },
           },
         },
       },
@@ -63,6 +66,7 @@ export default defineEventHandler<GetUsersResponse>(async (event) => {
     throw createError({
       statusCode: 404,
       statusMessage: "Not Found",
+      message: "User not found.",
     });
 
   return user.auth_user;

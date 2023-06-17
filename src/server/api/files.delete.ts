@@ -19,7 +19,11 @@ export default defineEventHandler<DeleteFileResponse>(async (event) => {
   const apikey = getRequestHeader(event, "authorization");
 
   if (!apikey)
-    throw createError({ statusCode: 401, statusMessage: "Unauthorized: missing apikey authorization header" });
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized",
+      message: "Missing apikey authorization header.",
+    });
 
   const user = await prisma.authUser.findUnique({
     where: { api_key: apikey },
@@ -27,15 +31,19 @@ export default defineEventHandler<DeleteFileResponse>(async (event) => {
   });
 
   if (!user)
-    throw createError({ statusCode: 401, statusMessage: "Unauthorized: invalid credentials" });
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
+    });
 
   const filename = body?.filename;
 
   if (!filename || typeof filename !== "string")
     throw createError({
       statusCode: 400,
-      statusMessage:
-        "Bad Request: missing required type of filename key in body - string",
+      statusMessage: "Bad Request",
+      message: "Missing required type of filename key in body - string.",
     });
 
   const file = await prisma.upload.findUnique({
@@ -46,14 +54,16 @@ export default defineEventHandler<DeleteFileResponse>(async (event) => {
   if (!file)
     throw createError({
       statusCode: 404,
-      statusMessage: "Not Found: file not found",
+      statusMessage: "Not Found",
+      message: "File not found.",
     });
 
   // Check for permissions
   if (file.authorId !== user.id || user.role !== "ADMIN")
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: missing permissions",
+      statusMessage: "Unauthorized",
+      message: "Missing permissions.",
     });
 
   // S3 instance
@@ -66,7 +76,8 @@ export default defineEventHandler<DeleteFileResponse>(async (event) => {
   if (!deleteResponse)
     throw createError({
       statusCode: 500,
-      statusMessage: "Internal Server Error: deletion error, check console",
+      statusMessage: "Internal Server Error",
+      message: "There was an unknown deletion error, please consider checking your console output.",
     });
 
   try {
@@ -79,7 +90,8 @@ export default defineEventHandler<DeleteFileResponse>(async (event) => {
     console.log(error);
     throw createError({
       statusCode: 500,
-      statusMessage: "Internal Server Error: check console",
+      statusMessage: "Internal Server Error",
+      message: "An unknown error has occured. Please consider checking console output for more information.",
     });
   }
 
@@ -87,5 +99,5 @@ export default defineEventHandler<DeleteFileResponse>(async (event) => {
     statusCode: 200,
     statusMessage: "OK",
     body: deleteResponse,
-  }
+  };
 });

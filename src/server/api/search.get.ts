@@ -22,7 +22,8 @@ export default defineEventHandler<SearchResponse>(async (event) => {
   if (!apikey)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: missing apikey authorization header",
+      statusMessage: "Unauthorized",
+      message: "Missing apikey authorization header.",
     });
 
   const user = await prisma.authUser.findUnique({
@@ -33,7 +34,8 @@ export default defineEventHandler<SearchResponse>(async (event) => {
   if (!user)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: invalid credentials",
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
     });
 
   const condition =

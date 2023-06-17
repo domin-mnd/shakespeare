@@ -14,7 +14,8 @@ export default defineEventHandler<GetFileResponse>(async (event) => {
   if (!filename)
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: missing required parameter - filename",
+      statusMessage: "Bad Request",
+      message: "Missing required parameter - filename.",
     });
 
   const upload = await prisma.upload.findUnique({
@@ -23,7 +24,11 @@ export default defineEventHandler<GetFileResponse>(async (event) => {
   });
 
   if (!upload)
-    throw createError({ statusCode: 404, statusMessage: "Not Found" });
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Not Found",
+      message: "File not found.",
+    });
 
   /**
    * prisma query calls are then-able so we wrap it with Promise

@@ -18,7 +18,8 @@ export default defineEventHandler<DeleteUserResponse>(async (event) => {
   if (!apikey)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: missing required header - authorization",
+      statusMessage: "Unauthorized",
+      message: "Missing required header - authorization.",
     });
   
   // Required keys
@@ -28,13 +29,15 @@ export default defineEventHandler<DeleteUserResponse>(async (event) => {
   if (!userId)
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: missing required key - userId",
+      statusMessage: "Bad Request",
+      message: "Missing required key - userId."
     });
 
   if (typeof userId !== "string")
     throw createError({
       statusCode: 400,
-      statusMessage: "Bad Request: userId must be a string",
+      statusMessage: "Bad Request",
+      message: "userId must be a string."
     });
 
   const user = await prisma.authUser.findUnique({
@@ -45,7 +48,8 @@ export default defineEventHandler<DeleteUserResponse>(async (event) => {
   if (!user || (user?.role !== "ADMIN" && user?.id !== userId))
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: invalid credentials",
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
     });
 
   try {
@@ -57,13 +61,15 @@ export default defineEventHandler<DeleteUserResponse>(async (event) => {
     ) {
       throw createError({
         statusCode: 400,
-        statusMessage: "Conflict: invalid userId",
+        statusMessage: "Conflict",
+        message: "Invalid userId.",
       });
     } else {
       console.log(error);
       throw createError({
         statusCode: 500,
-        statusMessage: "Internal Server Error: check console",
+        statusMessage: "Internal Server Error",
+        message: "An unknown error has occured. Please consider checking console output for more information."
       });
     }
   }

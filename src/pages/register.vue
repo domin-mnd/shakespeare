@@ -98,7 +98,7 @@ function validatePasswordConfirm(password: string, passwordConfirm: string) {
   return true;
 }
 
-async function onFormSubmit(event: Event) {
+async function register(event: Event) {
   event.preventDefault();
 
   const formData = new FormData(event.target as HTMLFormElement);
@@ -125,39 +125,32 @@ async function onFormSubmit(event: Event) {
     body: JSON.stringify({ ...data, role: "ADMIN" }),
   });
 
-  if (errorResponse.value?.statusCode) {
+  if (errorResponse.value) {
     loading.show = false;
-    switch (errorResponse.value?.statusCode) {
-      case 400:
-        error.title = "Bad request";
-        error.content = errorResponse.value?.statusMessage || "Bad request";
-        error.show = true;
-        break;
-      case 409:
-        usernameTooltip.label = usernameErrors[3];
-        usernameTooltip.show = true;
-        break;
-      case 500:
-        error.title = "An unknown error occured";
-        error.content =
-          "There was an unknown error on the server while sending register request. Please consider checking console output for more information.";
-        error.show = true;
-        break;
-      default:
-        break;
+
+    if (errorResponse.value.statusCode === 409) {
+      usernameTooltip.label = usernameErrors[3];
+      usernameTooltip.show = true;
+      return;
     }
+
+    error.title = errorResponse.value?.data.statusMessage ?? "An error occured";
+    error.content =
+      errorResponse.value?.data.message ??
+      "An unknown error has occured. Please consider checking console output for more information.";
+    error.show = true;
     return;
   }
 
   // Should be 201 Created because of switch validation done above
   const successResult = response.value as CreateUserResponse;
 
-  const sessionCookie = useCookie("api_key", {
-    expires: new Date(successResult.body.session.activePeriodExpiresAt),
+  const apiKeyCookie = useCookie("api_key", {
+    expires: new Date(successResult.body.session.idlePeriodExpiresAt),
     sameSite: "lax",
   });
 
-  sessionCookie.value = successResult.body.apikey;
+  apiKeyCookie.value = successResult.body.apikey;
 
   if (!(data.avatar as File).name && !data.avatarUrl) return navigateTo("/");
 
@@ -180,34 +173,36 @@ async function onFormSubmit(event: Event) {
 
     if (errorResponse.value?.statusCode) {
       loading.show = false;
-      error.title = "Unknown Error";
-      error.content = errorResponse.value?.statusMessage || "Bad request";
+      error.title = errorResponse.value?.data.statusMessage ?? "An error occured";
+      error.content =
+        errorResponse.value?.data.message ??
+        "An unknown error has occured. Please consider checking console output for more information.";
       error.show = true;
       return navigateTo("/");
     }
 
-    data.avatarUrl = response.value as string;
+    data.avatarUrl = (response.value as string) + "/raw";
   }
 
   loading.state = "Assigning avatar...";
-  const { error: errorUpdateResponse } = await useFetch(
-    "/api/user",
-    {
-      method: "PUT",
-      headers: {
-        authorization: successResult.body.apikey,
-      },
-      body: JSON.stringify({
-        avatar_url: data.avatarUrl,
-        userId: successResult.body.id,
-      }),
-    }
-  );
+  const { error: errorUpdateResponse } = await useFetch("/api/user", {
+    method: "PUT",
+    headers: {
+      authorization: successResult.body.apikey,
+    },
+    body: JSON.stringify({
+      avatar_url: data.avatarUrl,
+      userId: successResult.body.id,
+    }),
+  });
 
   loading.show = false;
   if (errorUpdateResponse.value?.statusCode) {
-    error.title = "Unknown Error";
-    error.content = errorUpdateResponse.value?.statusMessage || "Bad request";
+    error.title =
+      errorUpdateResponse.value?.data.statusMessage ?? "An error occured";
+    error.content =
+      errorUpdateResponse.value?.data.message ??
+      "An unknown error has occured. Please consider checking console output for more information.";
     error.show = true;
   }
 
@@ -217,7 +212,7 @@ async function onFormSubmit(event: Event) {
 <template>
   <div>
     <NuxtLayout name="client">
-      <UiForm @submit="onFormSubmit">
+      <UiForm @submit="register">
         <UiGroup>
           <UiTooltip
             :label="usernameTooltip.label"
@@ -286,18 +281,15 @@ async function onFormSubmit(event: Event) {
           </span>
           <UiButton id="button"> Register </UiButton>
         </div>
-        <UiOverlay :show="loading.show">
-          <UiLoader :loading="loading.show" />
-          <span id="loading-state">
-            {{ loading.state }}
-          </span>
-        </UiOverlay>
-        <UiOverlay :show="error.show" opacity="0.5">
-          <UiModal :title="error.title" @close="error.show = false">
-            {{ error.content }}
-          </UiModal>
-        </UiOverlay>
       </UiForm>
+
+      <UiOverlayLoading :show="loading.show" :state="loading.state" />
+      <UiOverlayError
+        :show="error.show"
+        :title="error.title"
+        :content="error.content"
+        @close="error.show = false"
+      />
     </NuxtLayout>
   </div>
 </template>
@@ -320,9 +312,4 @@ async function onFormSubmit(event: Event) {
 
     #note
       text-align center
-
-#loading-state
-  margin-top ss-lg-20
-  color cs-dimmed
-  font-size fs-md-15
 </style>

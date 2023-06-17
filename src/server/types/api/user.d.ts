@@ -1,4 +1,20 @@
 /**
+ * ### POST `/api/login` success response
+ * 
+ * @prop {string} username - Permanent username for the user
+ * @prop {string} password - User password
+ */
+interface LoginUserResponse extends DefaultResponse {
+  /** Logged in user response */
+  body: {
+    /** Lucia session for that user */
+    session: import("lucia-auth").Session;
+    /** User's api_key to save */
+    apikey: string;
+  }
+}
+
+/**
  * ### GET `/api/user` success response
  *
  * @see {@link https://lucia-auth.com/basics/handle-requests?nuxt Handle Requests}

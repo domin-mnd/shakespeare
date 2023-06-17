@@ -20,7 +20,8 @@ export default defineEventHandler<GetViewsResponse>(async (event) => {
   if (!apikey)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: missing apikey authorization header",
+      statusMessage: "Unauthorized",
+      message: "Missing apikey authorization header.",
     });
 
   const user = await prisma.authUser.findUnique({
@@ -31,7 +32,8 @@ export default defineEventHandler<GetViewsResponse>(async (event) => {
   if (!user)
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized: invalid credentials",
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
     });
 
   const upload = await prisma.upload.findMany({

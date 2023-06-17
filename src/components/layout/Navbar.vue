@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import {
-  RiHomeFill,
-  RiFolderUploadFill,
-  RiSearchFill,
-  RiSettingsFill,
-  RiUserSmileFill,
-} from "vue-remix-icons";
+import RiHomeFill from "vue-remix-icons/ri-home-fill.vue";
+import RiFolderUploadFill from "vue-remix-icons/ri-folder-upload-fill.vue";
+import RiSearchFill from "vue-remix-icons/ri-search-fill.vue";
+import RiSettingsFill from "vue-remix-icons/ri-settings-fill.vue";
+import RiUserSmileFill from "vue-remix-icons/ri-user-smile-fill.vue";
 
 const links = [
   {
@@ -34,6 +32,10 @@ const links = [
     icon: RiUserSmileFill,
   },
 ];
+
+// Add icons to options.include
+
+
 </script>
 <template>
   <aside id="toolbar">

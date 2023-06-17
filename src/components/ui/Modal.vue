@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RiCloseFill } from 'vue-remix-icons';
+import RiCloseFill from 'vue-remix-icons/ri-close-fill.vue';
 
 const {
   title,

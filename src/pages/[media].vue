@@ -1,12 +1,8 @@
 <script lang="ts" setup>
 definePageMeta({
-  layout: false,
+  layout: "client",
 });
 </script>
 <template>
-  <div>
-    <NuxtLayout name="client">
-      6
-    </NuxtLayout>
-  </div>
+  <div>6</div>
 </template>

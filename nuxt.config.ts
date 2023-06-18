@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     },
   },
   build: {
-    transpile: ['vue-remix-icons'],
+    transpile: ["vue-remix-icons"],
   },
   vite: {
     css: {
@@ -38,6 +38,16 @@ export default defineNuxtConfig({
           additionalData: `@import "${__dirname}/src/assets/styles/theme/*.styl"`,
         },
       },
+    },
+  },
+  app: {
+    pageTransition: {
+      name: "page",
+      mode: "out-in",
+    },
+    layoutTransition: {
+      name: "layout",
+      mode: "out-in",
     },
   },
 });

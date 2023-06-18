@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({
-  layout: false,
+  layout: "client",
 });
 const { data } = await useFetch("/api/user");
 
@@ -173,7 +173,8 @@ async function register(event: Event) {
 
     if (errorResponse.value?.statusCode) {
       loading.show = false;
-      error.title = errorResponse.value?.data.statusMessage ?? "An error occured";
+      error.title =
+        errorResponse.value?.data.statusMessage ?? "An error occured";
       error.content =
         errorResponse.value?.data.message ??
         "An unknown error has occured. Please consider checking console output for more information.";
@@ -211,86 +212,84 @@ async function register(event: Event) {
 </script>
 <template>
   <div>
-    <NuxtLayout name="client">
-      <UiForm @submit="register">
-        <UiGroup>
-          <UiTooltip
-            :label="usernameTooltip.label"
-            :show="usernameTooltip.show"
-            @input="usernameTooltip.show = false"
-            position="bottom"
-            with-arrow
-            dont-show-on-hover
-          >
-            <UiField
-              field-name="username"
-              placeholder="crazyjoe168"
-              label="Username"
-              note="Permanent identifier"
-              required
-            />
-          </UiTooltip>
+    <UiForm @submit="register">
+      <UiGroup>
+        <UiTooltip
+          :label="usernameTooltip.label"
+          :show="usernameTooltip.show"
+          @input="usernameTooltip.show = false"
+          position="bottom"
+          with-arrow
+          dont-show-on-hover
+        >
           <UiField
-            field-name="nickname"
-            placeholder="Crazy Joe"
-            label="Nickname"
+            field-name="username"
+            placeholder="crazyjoe168"
+            label="Username"
+            note="Permanent identifier"
+            required
           />
+        </UiTooltip>
+        <UiField
+          field-name="nickname"
+          placeholder="Crazy Joe"
+          label="Nickname"
+        />
+        <UiField
+          field-name="avatar"
+          placeholder="Link to an image..."
+          label="Avatar"
+          type="file"
+          accept="image/*"
+        />
+      </UiGroup>
+      <UiGroup>
+        <UiTooltip
+          :label="passwordTooltip.label"
+          :show="passwordTooltip.show"
+          @input="passwordTooltip.show = false"
+          position="bottom"
+          with-arrow
+          dont-show-on-hover
+        >
           <UiField
-            field-name="avatar"
-            placeholder="Link to an image..."
-            label="Avatar"
-            type="file"
-            accept="image/*"
+            field-name="password"
+            label="Password"
+            type="password"
+            required
           />
-        </UiGroup>
-        <UiGroup>
-          <UiTooltip
-            :label="passwordTooltip.label"
-            :show="passwordTooltip.show"
-            @input="passwordTooltip.show = false"
-            position="bottom"
-            with-arrow
-            dont-show-on-hover
-          >
-            <UiField
-              field-name="password"
-              label="Password"
-              type="password"
-              required
-            />
-          </UiTooltip>
-          <UiTooltip
-            :label="passwordConfirmTooltip.label"
-            :show="passwordConfirmTooltip.show"
-            @input="passwordConfirmTooltip.show = false"
-            position="bottom"
-            with-arrow
-            dont-show-on-hover
-          >
-            <UiField
-              field-name="password-confirm"
-              label="Confirm password"
-              type="password"
-              required
-            />
-          </UiTooltip>
-        </UiGroup>
-        <div id="submit-footer">
-          <span id="note">
-            Your account will be assigned as an Administrator
-          </span>
-          <UiButton id="button"> Register </UiButton>
-        </div>
-      </UiForm>
+        </UiTooltip>
+        <UiTooltip
+          :label="passwordConfirmTooltip.label"
+          :show="passwordConfirmTooltip.show"
+          @input="passwordConfirmTooltip.show = false"
+          position="bottom"
+          with-arrow
+          dont-show-on-hover
+        >
+          <UiField
+            field-name="password-confirm"
+            label="Confirm password"
+            type="password"
+            required
+          />
+        </UiTooltip>
+      </UiGroup>
+      <div id="submit-footer">
+        <span id="note">
+          Your account will be assigned as an Administrator
+        </span>
+        <UiButton id="button"> Register </UiButton>
+      </div>
+    </UiForm>
 
-      <UiOverlayLoading :show="loading.show" :state="loading.state" />
-      <UiOverlayError
-        :show="error.show"
-        :title="error.title"
-        :content="error.content"
-        @close="error.show = false"
-      />
-    </NuxtLayout>
+    <UiOverlayLoading :show="loading.show" :state="loading.state" />
+    <UiOverlayError
+      :show="error.show"
+      :title="error.title"
+      :content="error.content"
+      @close="error.show = false"
+    />
   </div>
 </template>
 <style lang="stylus" scoped>

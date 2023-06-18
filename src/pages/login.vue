@@ -7,7 +7,7 @@ if (!data.value.usersExist) await navigateTo("/register");
 if (data.value.userId) await navigateTo("/");
 
 definePageMeta({
-  layout: false,
+  layout: "client",
 });
 
 interface Modal {
@@ -67,34 +67,32 @@ async function login(event: Event) {
 </script>
 <template>
   <div>
-    <NuxtLayout name="client">
-      <UiForm @submit="login">
-        <UiGroup>
-          <UiField
-            field-name="username"
-            placeholder="crazyjoe168"
-            label="Username"
-          />
-          <UiField
-            field-name="password"
-            label="Password"
-            type="password"
-            required
-          />
-        </UiGroup>
-        <div id="submit-footer">
-          <UiButton id="button"> Login </UiButton>
-        </div>
-      </UiForm>
+    <UiForm @submit="login">
+      <UiGroup>
+        <UiField
+          field-name="username"
+          placeholder="crazyjoe168"
+          label="Username"
+        />
+        <UiField
+          field-name="password"
+          label="Password"
+          type="password"
+          required
+        />
+      </UiGroup>
+      <div id="submit-footer">
+        <UiButton id="button"> Login </UiButton>
+      </div>
+    </UiForm>
 
-      <UiOverlayLoading :show="loading.show" :state="loading.state" />
-      <UiOverlayError
-        :show="error.show"
-        :title="error.title"
-        :content="error.content"
-        @close="error.show = false"
-      />
-    </NuxtLayout>
+    <UiOverlayLoading :show="loading.show" :state="loading.state" />
+    <UiOverlayError
+      :show="error.show"
+      :title="error.title"
+      :content="error.content"
+      @close="error.show = false"
+    />
   </div>
 </template>
 <style lang="stylus" scoped>

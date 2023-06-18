@@ -3,14 +3,9 @@ import { LuciaError } from "lucia-auth";
 import { prisma } from "@/server/libs/database";
 
 /**
- * ## User creation
+ * ## User login
  *
- * Endpoint processes 2 steps of validation & then handling record creation:
- *
- * - Validate an account that creates another user (must be ADMIN) (only if there are account records)
- * - Validate parameters & keys for creation
- * - Create the record in database via lucia-auth
- * - Handle conflict error
+ * Endpoint validates username and password and creates a session.
  */
 export default defineEventHandler<LoginUserResponse>(async (event) => {
   // Required keys

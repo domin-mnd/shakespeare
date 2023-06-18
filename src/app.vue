@@ -22,4 +22,22 @@
 body
   margin 0
   background-color cs-background
+
+Nuxt layout transitions
+.layout-enter-active,
+.layout-leave-active
+  transition all 0.2s ease-in-out
+
+.layout-enter-from,
+.layout-leave-to
+  opacity 0
+
+// Nuxt page transitions
+.page-enter-active,
+.page-leave-active
+  transition all 0.2s ease-in-out
+
+.page-enter-from,
+.page-leave-to
+  opacity 0
 </style>

@@ -14,6 +14,14 @@ if (!data.value?.userId) {
   if (!data.value.usersExist) await navigateTo("/register");
   else await navigateTo("/login");
 }
+
+const store = useUserStore();
+
+// Converting to string because the above validation gets returned ^
+store.validate({
+  userId: data.value.userId as string,
+  ...data.value.body,
+});
 </script>
 <template>
   <LayoutWrapper>

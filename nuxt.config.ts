@@ -12,6 +12,7 @@ export default defineNuxtConfig({
   modules: [
     // Helmet & rate limiting
     "nuxt-security",
+    "@pinia/nuxt",
   ],
   security: {
     rateLimiter: {
@@ -49,5 +50,11 @@ export default defineNuxtConfig({
       name: "layout",
       mode: "out-in",
     },
+  },
+  pinia: {
+    autoImports: ["defineStore", "acceptHMRUpdate"],
+  },
+  imports: {
+    dirs: ["./store"],
   },
 });

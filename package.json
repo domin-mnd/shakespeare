@@ -29,9 +29,11 @@
     "@aws-sdk/lib-storage": "^3.345.0",
     "@fontsource-variable/manrope": "^5.0.3",
     "@lucia-auth/adapter-prisma": "^2.0.0",
+    "@pinia/nuxt": "^0.4.11",
     "@prisma/client": "^4.14.1",
     "formidable": "^2.1.1",
     "lucia-auth": "^1.7.0",
+    "pinia": "^2.1.4",
     "slova": "^2.2.2",
     "vue-remix-icons": "^3.2.0"
   }

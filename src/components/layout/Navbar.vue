@@ -5,6 +5,8 @@ import RiSearchFill from "vue-remix-icons/ri-search-fill.vue";
 import RiSettingsFill from "vue-remix-icons/ri-settings-fill.vue";
 import RiUserSmileFill from "vue-remix-icons/ri-user-smile-fill.vue";
 
+const store = useUserStore();
+
 const links = [
   {
     label: "Home",
@@ -28,13 +30,10 @@ const links = [
   },
   {
     label: "Profile",
-    to: "/@profile",
+    to: `/@${store.username}`,
     icon: RiUserSmileFill,
   },
 ];
-
-// Add icons to options.include
-
 
 </script>
 <template>

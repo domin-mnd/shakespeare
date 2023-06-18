@@ -20,7 +20,17 @@ interface LoginUserResponse extends DefaultResponse {
  * @see {@link https://lucia-auth.com/basics/handle-requests?nuxt Handle Requests}
  */
 interface GetUserResponse extends DefaultResponse {
+  /** User ID */
   userId?: string;
+  body: {
+    /** nickname may not be set so it will be null */
+    nickname?: string | null;
+    /** avatar_url may not be set so it will be null */
+    avatar_url?: string | null;
+    /** User username taken from auth_key */
+    username?: string;
+  };
+  /** Whether any users exist or not, decides the register page accessability */
   usersExist: boolean;
 }
 

@@ -66,7 +66,7 @@ async function login(event: Event) {
 }
 </script>
 <template>
-  <div>
+  <div id="padding">
     <UiForm @submit="login">
       <UiGroup>
         <UiField
@@ -96,6 +96,10 @@ async function login(event: Event) {
   </div>
 </template>
 <style lang="stylus" scoped>
+#padding
+  padding-left ss-xl-25
+  padding-right ss-xl-25
+
 #submit-footer
   display flex
   justify-content flex-end

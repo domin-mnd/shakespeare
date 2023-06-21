@@ -143,5 +143,5 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
   }
 
   // ShareX needs a link to the file
-  return `https://${getRequestHost(event)}/${filename}`;
+  return `${getRequestProtocol(event)}://${getRequestHost(event)}/${filename}`;
 });

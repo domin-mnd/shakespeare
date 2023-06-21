@@ -20,7 +20,17 @@ export default defineEventHandler<GetFileResponse>(async (event) => {
 
   const upload = await prisma.upload.findUnique({
     where: { filename },
-    include: { author: true },
+    include: {
+      author: {
+        include: {
+          auth_key: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!upload)
@@ -49,10 +59,14 @@ export default defineEventHandler<GetFileResponse>(async (event) => {
 
   return {
     ...upload,
+    // Remove original S3 url as we use repiping url/media/raw
+    path: undefined,
     // Remove authorId as unnecessary
     authorId: undefined,
     author: {
       ...upload.author,
+      username: upload?.author.auth_key[0].id.split(":")[1],
+      auth_key: undefined,
       // Remove api_key & role for secure purposes
       api_key: undefined,
       role: undefined,

@@ -4,13 +4,16 @@ import RiCloseFill from 'vue-remix-icons/ri-close-fill.vue';
 const {
   title,
   withoutCloseButton,
-} = defineProps(["title", "withoutCloseButton"]);
+} = defineProps<{
+  title?: string;
+  withoutCloseButton?: boolean;
+}>();
 </script>
 <template>
   <div class="box">
-    <div v-if="title || withoutCloseButton === undefined" class="header">
+    <div v-if="title || !withoutCloseButton" class="header">
       <span class="title">{{ title ?? "" }}</span>
-      <RiCloseFill v-if="withoutCloseButton === undefined" width="24" height="24" class="close" @click="$emit('close')" />
+      <RiCloseFill v-if="!withoutCloseButton" width="24" height="24" class="close" @click="$emit('close')" />
       <div v-else />
     </div>
     <div class="content">

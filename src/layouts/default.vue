@@ -4,9 +4,7 @@
  * @see {@link https://github.com/pilcrowOnPaper/lucia/blob/main/examples/nuxt/pages/index.vue Example}
  */
 
-const { data } = await useFetch("/api/user", {
-  server: true,
-});
+const { data } = await useFetch("/api/user");
 
 if (!data.value) throw createError("Failed to fetch data");
 

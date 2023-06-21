@@ -4,7 +4,11 @@ const {
   fieldName,
   label,
   note,
-} = defineProps(['fieldName', 'label', 'note']);
+} = defineProps<{
+  fieldName: string;
+  label: string;
+  note?: string;
+}>();
 </script>
 <template>
   <div class="field">

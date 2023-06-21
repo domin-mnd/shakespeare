@@ -15,6 +15,7 @@
     "schema": "src/database/schema.prisma"
   },
   "devDependencies": {
+    "@nuxt/image": "1.0.0-rc.1",
     "@nuxt/test-utils": "^3.5.3",
     "@types/formidable": "^2.0.6",
     "@types/node": "^18",
@@ -31,10 +32,12 @@
     "@lucia-auth/adapter-prisma": "^2.0.0",
     "@pinia/nuxt": "^0.4.11",
     "@prisma/client": "^4.14.1",
+    "chart.js": "^4.3.0",
     "formidable": "^2.1.1",
     "lucia-auth": "^1.7.0",
     "pinia": "^2.1.4",
     "slova": "^2.2.2",
+    "vue-chartjs": "^5.2.0",
     "vue-remix-icons": "^3.2.0"
   }
 }

@@ -13,8 +13,14 @@ export default defineNuxtConfig({
     // Helmet & rate limiting
     "nuxt-security",
     "@pinia/nuxt",
+    "@nuxt/image",
   ],
   security: {
+    headers: {
+      xXSSProtection: '1',
+      contentSecurityPolicy: false,
+      accessControlAllowOrigin: "*",
+    },
     rateLimiter: {
       tokensPerInterval: 240,
       interval: "hour",

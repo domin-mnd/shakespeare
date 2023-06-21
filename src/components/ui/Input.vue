@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-const { type, placeholder, fieldName } = defineProps(["type", "placeholder", "fieldName"]);
+const { type, placeholder, fieldName } = defineProps<{
+  type?: string;
+  placeholder?: string;
+  fieldName?: string;
+}>();
 
 function onFileChange(event: Event) {
   // Get file location

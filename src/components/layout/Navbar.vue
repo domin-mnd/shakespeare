@@ -5,7 +5,7 @@ import RiSearchFill from "vue-remix-icons/ri-search-fill.vue";
 import RiSettingsFill from "vue-remix-icons/ri-settings-fill.vue";
 import RiUserSmileFill from "vue-remix-icons/ri-user-smile-fill.vue";
 
-const store = useUserStore();
+const store = await useUserStore();
 
 const links = [
   {

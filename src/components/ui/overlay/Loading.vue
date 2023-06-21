@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-const { show, state } = defineProps(["show", "state"]);
+const { show, state } = defineProps<{
+  show: boolean;
+  state: string;
+}>();
 </script>
 <template>
   <UiOverlay :show="show">

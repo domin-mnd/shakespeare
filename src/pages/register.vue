@@ -154,36 +154,49 @@ async function register(event: Event) {
 
   if (!(data.avatar as File).name && !data.avatarUrl) return navigateTo("/");
 
+  loading.state = "Uploading avatar...";
+
+  const fileFormData = new FormData();
+
   if ((data.avatar as File).name) {
-    loading.state = "Uploading avatar...";
+    // if form upload exists
+    fileFormData.append("media", data.avatar);
+  } else {
+    // if avatar url instead exists
+    const response = await fetch(data.avatarUrl as string);
+    const blob = await response.blob();
 
-    const formData = new FormData();
-    formData.append("media", data.avatar as File);
+    const file = new File([blob], "avatar.png", {
+      // string | null -> string | undefined
+      type: response.headers.get("Content-Type") ?? undefined,
+    });
 
-    const { data: response, error: errorResponse } = await useFetch(
-      "/api/files",
-      {
-        method: "POST",
-        headers: {
-          authorization: successResult.body.apikey,
-        },
-        body: formData,
-      }
-    );
-
-    if (errorResponse.value?.statusCode) {
-      loading.show = false;
-      error.title =
-        errorResponse.value?.data.statusMessage ?? "An error occured";
-      error.content =
-        errorResponse.value?.data.message ??
-        "An unknown error has occured. Please consider checking console output for more information.";
-      error.show = true;
-      return navigateTo("/");
-    }
-
-    data.avatarUrl = (response.value as string) + "/raw";
+    fileFormData.append("media", file);
   }
+
+  const { data: fileResponse, error: errorFileResponse } = await useFetch(
+    "/api/files",
+    {
+      method: "POST",
+      headers: {
+        authorization: successResult.body.apikey,
+      },
+      body: fileFormData,
+    }
+  );
+
+  if (errorFileResponse.value?.statusCode) {
+    loading.show = false;
+    error.title =
+      errorFileResponse.value?.data.statusMessage ?? "An error occured";
+    error.content =
+      errorFileResponse.value?.data.message ??
+      "An unknown error has occured. Please consider checking console output for more information.";
+    error.show = true;
+    return navigateTo("/");
+  }
+
+  data.avatarUrl = (fileResponse.value as string) + "/raw";
 
   loading.state = "Assigning avatar...";
   const { error: errorUpdateResponse } = await useFetch("/api/user", {
@@ -211,7 +224,7 @@ async function register(event: Event) {
 }
 </script>
 <template>
-  <div>
+  <div id="padding">
     <UiForm @submit="register">
       <UiGroup>
         <UiTooltip
@@ -293,6 +306,10 @@ async function register(event: Event) {
   </div>
 </template>
 <style lang="stylus" scoped>
+#padding
+  padding-left ss-xl-25
+  padding-right ss-xl-25
+
 #submit-footer
   display flex
   justify-content space-between

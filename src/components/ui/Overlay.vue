@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-const { show, opacity } = defineProps(["show", "opacity"]);
+const { show, opacity } = defineProps<{
+  show: boolean;
+  opacity?: number;
+}>();
 </script>
 <template>
   <div
@@ -11,26 +14,6 @@ const { show, opacity } = defineProps(["show", "opacity"]);
   </div>
 </template>
 <style lang="stylus" scoped>
-// @keyframes hide
-//   0%
-//     opacity 1
-//     height 100vh
-//   99.9%
-//     opacity 0
-//     height 100vh
-//   100%
-//     opacity 0
-//     height 0
-
-// @keyframes show
-//   0%
-//     opacity 0
-//   0.1%
-//     opacity 0
-//     height 100vh
-//   100%
-//     opacity 1
-
 .overlay
   transition all .3s ease
   display flex
@@ -40,7 +23,7 @@ const { show, opacity } = defineProps(["show", "opacity"]);
   opacity 0
   pointer-events none
 
-  position absolute
+  position fixed
   top 0
   left 0
   z-index 25

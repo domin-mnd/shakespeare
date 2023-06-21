@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-const { label, position, withArrow, dontShowOnHover, show } = defineProps([
-  "label",
-  "position",
-  "withArrow",
-  "dontShowOnHover",
-  "show"
-]);
+const { label, position, withArrow, dontShowOnHover, show } = defineProps<{
+  label: string;
+  position?: "top" | "bottom" | "left" | "right";
+  withArrow?: boolean;
+  dontShowOnHover?: boolean;
+  show?: boolean;
+}>();
 
 const displayArrow = withArrow !== undefined ? 1 : 0;
 </script>
 <template>
   <div class="tooltip-wrapper" :data-position="position ?? 'top'">
-    <div class="tooltip-content" :class="{ hoverable: dontShowOnHover === undefined, active: show }">
+    <div class="tooltip-content" :class="{ hoverable: !dontShowOnHover, active: show }">
       <div class="tooltip" role="tooltip">{{ label }}</div>
       <div class="arrow"></div>
     </div>

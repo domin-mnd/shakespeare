@@ -30,7 +30,7 @@ const year = postDate.getFullYear();
     <img :src="src" id="image" />
     <div id="info">
       <span id="timestamp">
-        {{ new Date().getFullYear() === year ? year + ", " : undefined }}{{ month }} {{ day }}, {{ hours }}:{{ minutes }}
+        {{ new Date().getFullYear() !== year ? year + ", " : undefined }}{{ month }} {{ day }}, {{ hours }}:{{ minutes }}
       </span>
       <div id="views">
         <span id="count">

@@ -54,7 +54,21 @@ export default defineEventHandler<SearchResponse>(async (event) => {
       },
       ...condition,
     },
-    include: { author: true },
+    include: {
+      author: {
+        select: {
+          id: true,
+          nickname: true,
+          avatar_url: true,
+          auth_key: {
+            take: 1,
+            select: {
+              id: true,
+            }
+          }
+        }
+      }
+    },
   });
 
   return upload.map((file) => ({
@@ -62,10 +76,10 @@ export default defineEventHandler<SearchResponse>(async (event) => {
     // Remove authorId as unnecessary
     authorId: undefined,
     author: {
-      ...file.author,
-      // Remove api_key & role for secure purposes
-      api_key: undefined,
-      role: undefined,
+      id: file.author.id,
+      avatar_url: file.author.avatar_url,
+      nickname: file.author.nickname,
+      username: file.author.auth_key[0].id.split(":")[1],
     },
   }));
 });

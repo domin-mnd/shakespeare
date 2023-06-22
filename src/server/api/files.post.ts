@@ -133,7 +133,7 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
         });
       }
     } else {
-      console.log(error);
+      console.error(error);
       throw createError({
         statusCode: 500,
         statusMessage: "Internal Server Error",

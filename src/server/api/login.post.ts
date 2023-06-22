@@ -85,7 +85,7 @@ export default defineEventHandler<LoginUserResponse>(async (event) => {
         message: "Incorrect username or password.",
       });
     } else {
-      console.log(error);
+      console.error(error);
       throw createError({
         statusCode: 500,
         statusMessage: "Internal Server Error",

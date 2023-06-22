@@ -65,7 +65,7 @@ export default defineEventHandler<DeleteUserResponse>(async (event) => {
         message: "Invalid userId.",
       });
     } else {
-      console.log(error);
+      console.error(error);
       throw createError({
         statusCode: 500,
         statusMessage: "Internal Server Error",

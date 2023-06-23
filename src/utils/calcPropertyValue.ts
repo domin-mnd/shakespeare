@@ -1,3 +1,12 @@
+/**
+ * Calculates the new value of a CSS property by applying a time modificator
+ * to the original value.
+ *
+ * @param {string} propName - The name of the CSS property to modify.
+ * @param {string} originalValue - The original value of the property.
+ * @param {number} modificator - The modificator to apply to the time value of the property.
+ * @return {Object} An object containing the computed CSS style with the modified property.
+ */
 export function calcPropertyValue(
   propName: string,
   originalValue: string,

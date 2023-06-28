@@ -1,6 +1,4 @@
 import { prisma } from "@/server/libs/database";
-import { simpleStorageService } from "@/server/libs/storage";
-import { deleteFileFromSimpleStorage } from "../utils";
 
 /**
  * ## File deletion endpoint.

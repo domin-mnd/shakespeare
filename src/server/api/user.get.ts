@@ -1,5 +1,4 @@
 import { prisma } from "@/server/libs/database";
-import { auth } from "@/server/utils/auth";
 
 /**
  * ## Validate user via lucia-auth

@@ -1,5 +1,6 @@
 import { prisma } from "@/server/libs/database";
 import { simpleStorageService } from "@/server/libs/storage";
+import { deleteFileFromSimpleStorage } from "../utils";
 
 /**
  * ## File deletion endpoint.
@@ -66,11 +67,8 @@ export default defineEventHandler<DeleteFileResponse>(async (event) => {
       message: "Missing permissions.",
     });
 
-  // S3 instance
-  const instance = simpleStorageService(filename);
-
   // Delete the file
-  const deleteResponse = await instance.delete();
+  const deleteResponse = await deleteFileFromSimpleStorage(filename);
 
   // Returns null if an error occured
   if (!deleteResponse)

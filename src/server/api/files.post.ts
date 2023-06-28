@@ -1,8 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/server/libs/database";
-import { shortener, readFiles } from "@/server/utils";
 import { ShorteningType } from "@/server/libs/constants";
-import { simpleStorageService } from "@/server/libs/storage";
 
 /**
  * ## File upload endpoint.
@@ -78,49 +76,8 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
       message: "Invalid filename.",
     });
 
-  // Upload to S3 instance
-  const instance = simpleStorageService(filename);
-
-  // No busboy or multer :P
-  // Get files via readFiles wrapper of formidable
-  const files = await readFiles(event, {
-    maxFiles: 1,
-    // No createReadStream because of performance
-    // Does not generate temp file even though `files` returns an object with it
-    fileWriteStreamHandler: instance.upload,
-  });
-
-  // This is actually the action that awaits full upload
-  const contents = await instance.contents();
-
-  // If this line returns undefined, then it means upload failed
-  if (!("Location" in contents))
-    throw createError({
-      statusCode: 500,
-      statusMessage: "Internal Server Error",
-      message: "Handled unknown file upload error. ¯\\_(ツ)_/¯",
-    });
-
-  // ShareX happen to upload files 1 by 1 and for the sake of type safety separate files
-  const file = Array.isArray(files) ? files[0] : files;
-
-  // Getting file extension according to the original file name that was uploaded
-  const fileExtension = file.media.originalFilename.split(".").pop();
-
   try {
-    // I could make it not awaiting the upload
-    // but it depends on the database
-    await prisma.upload.create({
-      data: {
-        filename,
-        mimetype: file.media.mimetype,
-        slug: `${filename}.${fileExtension}`,
-        size: file.media.size,
-        path: contents.Location as string,
-        authorId: user.id,
-        type: "FILE",
-      },
-    });
+    await streamFilesToSimpleStorage(event, filename, user.id);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // The .code property can be accessed in a type-safe manner

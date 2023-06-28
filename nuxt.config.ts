@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   nitro: {
     /** @see {@link https://lucia-auth.com/start-here/getting-started?nuxt Polyfill crypto global} */
     moduleSideEffects: ["lucia-auth/polyfill/node"],
+    preset: "vercel-edge",
   },
   typescript: {
     strict: true,
@@ -19,7 +20,6 @@ export default defineNuxtConfig({
     headers: {
       xXSSProtection: '1',
       contentSecurityPolicy: false,
-      accessControlAllowOrigin: "*",
     },
     rateLimiter: {
       tokensPerInterval: 240,

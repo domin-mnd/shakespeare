@@ -18,7 +18,7 @@ export default defineNuxtConfig({
   ],
   security: {
     headers: {
-      xXSSProtection: '1',
+      xXSSProtection: "1",
       contentSecurityPolicy: false,
     },
     rateLimiter: {
@@ -62,5 +62,8 @@ export default defineNuxtConfig({
   },
   imports: {
     dirs: ["./store"],
+  },
+  experimental: {
+    payloadExtraction: false,
   },
 });

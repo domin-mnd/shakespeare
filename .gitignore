@@ -4,6 +4,7 @@ node_modules
 .nitro
 .cache
 .output
+.vercel
 .env
 dist
 .DS_Store

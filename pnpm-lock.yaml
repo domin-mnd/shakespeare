@@ -13,9 +13,6 @@ dependencies:
   '@pinia/nuxt':
     specifier: ^0.4.11
     version: 0.4.11(vue@3.3.4)
-  '@prisma/client':
-    specifier: ^4.14.1
-    version: 4.16.1(prisma@4.16.1)
   busboy:
     specifier: ^1.6.0
     version: 1.6.0

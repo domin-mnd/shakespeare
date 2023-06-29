@@ -196,7 +196,7 @@ async function register(event: Event) {
     return navigateTo("/");
   }
 
-  data.avatarUrl = (fileResponse.value as string) + "/raw";
+  data.avatarUrl = (fileResponse.value as string).split(window.location.host)[1] + "/raw";
 
   loading.state = "Assigning avatar...";
   const { error: errorUpdateResponse } = await useFetch("/api/user", {

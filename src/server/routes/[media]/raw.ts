@@ -1,3 +1,4 @@
+import { prisma } from "@/server/libs/database";
 import { get } from "node:https";
 
 export default defineEventHandler(async (event) => {

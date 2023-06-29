@@ -17,6 +17,7 @@ import { ShorteningType } from "@/server/libs/constants";
  * @returns {string} Link to the file that ShareX needs, won't return any objects or something else.
  */
 export default defineEventHandler<CreateFileResponse>(async (event) => {
+  console.log(1);
   const url = getRequestURL(event);
   const shortenerTypeConfig = url.searchParams.get("type");
   const shortenerLengthConfig = url.searchParams.get("length");

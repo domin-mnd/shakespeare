@@ -17,6 +17,12 @@ if (error.value?.statusCode === 404) {
     statusMessage: "File not found",
   })
 }
+
+useHead({
+  meta: [
+    { name: "og:image", content: route.fullPath + '/raw' },
+  ],
+});
 </script>
 <template>
   <div>

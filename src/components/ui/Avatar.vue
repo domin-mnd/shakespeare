@@ -9,15 +9,10 @@ const avatarSize = size + "px";
 const presetLetterSize = size * 0.7 + "px";
 </script>
 <template>
-  <NuxtImg
+  <img
     v-if="src"
     :src="src"
-    :width="size"
-    :height="size"
     :alt="nickname"
-    :quality="size"
-    densities="x1 x2"
-    format="webp"
     loading="lazy"
     class="avatar"
     v-bind="$attrs"
@@ -30,6 +25,8 @@ const presetLetterSize = size * 0.7 + "px";
 .avatar
   border-radius rs-circle
   object-fit cover
+  width v-bind(avatarSize)
+  height v-bind(avatarSize)
 
   &.preset
     display flex
@@ -38,8 +35,6 @@ const presetLetterSize = size * 0.7 + "px";
 
     background-color cs-outline
     color cs-dimmed
-    width v-bind(avatarSize)
-    height v-bind(avatarSize)
     aspect-ratio 1
 
     font-size v-bind(presetLetterSize)

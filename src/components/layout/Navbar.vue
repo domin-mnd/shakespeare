@@ -3,9 +3,9 @@ import RiHomeFill from "vue-remix-icons/ri-home-fill.vue";
 import RiFolderUploadFill from "vue-remix-icons/ri-folder-upload-fill.vue";
 import RiSearchFill from "vue-remix-icons/ri-search-fill.vue";
 import RiSettingsFill from "vue-remix-icons/ri-settings-fill.vue";
-import RiUserSmileFill from "vue-remix-icons/ri-user-smile-fill.vue";
+import Avatar from "@/components/ui/Avatar.vue";
 
-const store = await useUserStore();
+const store = useUserStore();
 
 const links = [
   {
@@ -31,17 +31,27 @@ const links = [
   {
     label: "Profile",
     to: `/@${store.username}`,
-    icon: RiUserSmileFill,
+    icon: Avatar,
+    params: {
+      src: store.avatar_url,
+      size: 32,
+      nickname: store.nickname || store.username,
+    },
   },
 ];
-
 </script>
 <template>
   <aside id="toolbar">
     <div v-for="link in links" :key="link.label">
       <NuxtLink :to="link.to" class="link">
         <UiTooltip :label="link.label" position="left">
-          <component :is="link.icon" width="32" height="32" class="icon" />
+          <component
+            :is="link.icon"
+            width="32"
+            height="32"
+            class="icon"
+            v-bind="link.params"
+          />
         </UiTooltip>
       </NuxtLink>
     </div>
@@ -81,6 +91,7 @@ const links = [
 
 .link
   fill cs-dimmed
+  text-decoration none
 
   &.router-link-exact-active
     fill cs-primary

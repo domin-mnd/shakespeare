@@ -14,7 +14,6 @@ export default defineNuxtConfig({
     // Helmet & rate limiting
     "nuxt-security",
     "@pinia/nuxt",
-    "@nuxt/image",
   ],
   security: {
     headers: {

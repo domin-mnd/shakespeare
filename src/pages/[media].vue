@@ -11,30 +11,31 @@ const { data, error } = useFetch("/api/files", {
   server: true,
 });
 
-if (error.value?.statusCode === 404) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "File not found",
+if (error.value?.statusCode !== 404) {
+  useHead({
+    meta: [
+      { name: "og:image", content: route.fullPath + "/raw" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
   });
 }
-
-useHead({
-  meta: [
-    { name: "og:image", content: route.fullPath + "/raw" },
-    { name: "twitter:card", content: "summary_large_image" },
-    { name: "og:type", content: "image" },
-  ],
-});
 </script>
 <template>
-  <div>
+  <div v-if="(error?.statusCode !== 404)">
     <UiPostMinified
       :avatar="data?.author.avatar_url"
       :nickname="data?.author.nickname"
       :username="(data?.author.username as string)"
       :date="(data?.created_at as string)"
       :src="route.fullPath + '/raw'"
-      :views="data?.views as number"
+      :views="(data?.views as number)"
     />
   </div>
+  <div id="text-center" v-else>
+    <span>We could not find anything matching your search 🍃</span>
+  </div>
 </template>
+<style lang="stylus" scoped>
+#text-center
+  text-align center
+</style>

@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   srcDir: "src/",
   pages: true,
   nitro: {
-    preset: "vercel-edge",
+    preset: "vercel",
   },
   typescript: {
     strict: true,

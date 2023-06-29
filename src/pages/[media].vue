@@ -20,8 +20,7 @@ if (error.value?.statusCode === 404) {
 
 useHead({
   meta: [
-    { name: "twitter:image", content: route.fullPath + "/raw" },
-    { name: "twitter:image:src", content: route.fullPath + "/raw" },
+    { name: "og:image", content: route.fullPath + "/raw" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "og:type", content: "image" },
   ],

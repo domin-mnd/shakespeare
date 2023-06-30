@@ -4,7 +4,7 @@ definePageMeta({
 });
 
 const route = useRoute();
-const { data, error } = useFetch("/api/files", {
+const { data, error } = await useFetch("/api/files", {
   params: {
     filename: route.params.media,
   },

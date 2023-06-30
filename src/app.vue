@@ -23,7 +23,23 @@ body
   margin 0
   background-color cs-background
 
-Nuxt layout transitions
+
+html
+  overflow-y scroll
+
+  scrollbar-width thin
+  scrollbar-color cs-outline cs-background
+
+  &::-webkit-scrollbar
+    width 8px
+  
+  &::-webkit-scrollbar-thumb
+    background-color cs-outline
+
+  &::-webkit-scrollbar-track
+    background-color cs-background
+
+// Nuxt layout transitions
 .layout-enter-active,
 .layout-leave-active
   transition all 0.2s ease-in-out

@@ -48,6 +48,9 @@ export default defineEventHandler<SearchResponse>(async (event) => {
   const upload = await prisma.upload.findMany({
     skip: (+page - 1) * +quantity,
     take: +quantity,
+    orderBy: {
+      created_at: "desc",
+    },
     where: {
       filename: {
         contains: filename,

@@ -13,13 +13,13 @@ if (!data.value?.userId) {
   else await navigateTo("/login");
 }
 
-const store = useUserStore();
+const store = useUser();
 
 // Converting to string because the above validation gets returned ^
-store.validate({
-  userId: data.value.userId as string,
-  ...data.value.body,
-});
+store.value.userId = data.value.userId as string;
+store.value.avatar_url = data.value.body.avatar_url;
+store.value.nickname = data.value.body.nickname;
+store.value.username = data.value.body.username;
 </script>
 <template>
   <LayoutWrapper>

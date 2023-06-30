@@ -29,11 +29,9 @@
     "@aws-sdk/signature-v4-crt": "3.58.0",
     "@fontsource-variable/manrope": "^5.0.3",
     "@lucia-auth/adapter-prisma": "^2.0.0",
-    "@pinia/nuxt": "^0.4.11",
     "busboy": "^1.6.0",
     "chart.js": "^4.3.0",
     "lucia-auth": "^1.7.0",
-    "pinia": "^2.1.4",
     "slova": "^2.2.2",
     "vue-chartjs": "^5.2.0",
     "vue-remix-icons": "^3.2.0"

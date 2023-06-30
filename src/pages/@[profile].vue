@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-const state = useUserStore();
+const state = useUser();
 const route = useRoute();
 
 let notFound: boolean = false;
 const user = {
-  avatarUrl: state.avatar_url,
-  nickname: state.nickname,
-  username: state.username as string,
+  avatarUrl: state.value.avatar_url,
+  nickname: state.value.nickname,
+  username: state.value.username as string,
   withEditButton: true,
 };
 
-if (state.username !== route.fullPath.split("@")[1]) {
+if (state.value.username !== route.fullPath.split("@")[1]) {
   user.withEditButton = false;
   const cookie = useCookie("api_key");
 
@@ -21,7 +21,7 @@ if (state.username !== route.fullPath.split("@")[1]) {
     });
   }
 
-  const { data, error } = await useFetch("/api/user", {
+  const { data } = await useFetch("/api/user", {
     params: {
       username: route.fullPath.split("@")[1],
       quantity: 15,

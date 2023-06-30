@@ -16,7 +16,6 @@ export default defineNuxtConfig({
   modules: [
     // Helmet & rate limiting
     "nuxt-security",
-    "@pinia/nuxt",
   ],
   security: {
     headers: {

@@ -5,7 +5,7 @@ import RiSearchFill from "vue-remix-icons/ri-search-fill.vue";
 import RiSettingsFill from "vue-remix-icons/ri-settings-fill.vue";
 import Avatar from "@/components/ui/Avatar.vue";
 
-const store = useUserStore();
+const store = useUser();
 
 const links = [
   {
@@ -30,12 +30,12 @@ const links = [
   },
   {
     label: "Profile",
-    to: `/@${store.username}`,
+    to: `/@${store.value.username}`,
     icon: Avatar,
     params: {
-      src: store.avatar_url,
+      src: store.value.avatar_url,
       size: 32,
-      nickname: store.nickname || store.username,
+      nickname: store.value.nickname || store.value.username,
     },
   },
 ];

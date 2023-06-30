@@ -58,12 +58,6 @@ export default defineNuxtConfig({
       mode: "out-in",
     },
   },
-  pinia: {
-    autoImports: ["defineStore", "acceptHMRUpdate"],
-  },
-  imports: {
-    dirs: ["./store"],
-  },
   experimental: {
     payloadExtraction: false,
   },

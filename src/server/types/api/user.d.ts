@@ -19,7 +19,7 @@ interface LoginUserResponse extends DefaultResponse {
  *
  * @see {@link https://lucia-auth.com/basics/handle-requests?nuxt Handle Requests}
  */
-interface GetUserResponse extends DefaultResponse {
+interface GetProfileResponse extends DefaultResponse {
   /** User ID */
   userId?: string;
   body: {
@@ -41,13 +41,15 @@ interface GetUserResponse extends DefaultResponse {
  * @param {string} username - User username (not nickname)
  * @param {string} quantity - Amount of uploads to return from that user, defaults to 15
  */
-interface GetUsersResponse {
+interface GetUserResponse {
   /** User ID */
   id: string;
   /** User Nickname, can be null */
   nickname: string | null;
   /** User avatar, can be null */
   avatar_url: string | null;
+  /** User username */
+  username: string;
   /** User uploads, depends on quantity searchParam */
   uploads: import("@prisma/client").Upload[];
 }

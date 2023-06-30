@@ -13,6 +13,7 @@ export default defineEventHandler<GetViewsResponse>(async (event) => {
   const gte = url.searchParams.get("gte"); // Greater than or equal to
   const lt = url.searchParams.get("lt"); // Less than or equal
   const gt = url.searchParams.get("gt"); // Greater than or equal
+  const username = url.searchParams.get("username");
 
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");
@@ -24,7 +25,7 @@ export default defineEventHandler<GetViewsResponse>(async (event) => {
       message: "Missing apikey authorization header.",
     });
 
-  const user = await prisma.authUser.findUnique({
+  let user = await prisma.authUser.findUnique({
     where: { api_key: apikey },
     select: { id: true },
   });
@@ -34,6 +35,27 @@ export default defineEventHandler<GetViewsResponse>(async (event) => {
       statusCode: 401,
       statusMessage: "Unauthorized",
       message: "Invalid credentials.",
+    });
+
+  // Find either profile user or the given user
+  if (username) {
+    user = await prisma.authKey
+      .findUnique({
+        where: {
+          id: `username:${username}`,
+        },
+        select: {
+          id: true,
+        },
+      })
+      .auth_user();
+  }
+
+  if (!user)
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Not Found",
+      message: "User not found.",
     });
 
   const upload = await prisma.upload.findMany({
@@ -47,7 +69,7 @@ export default defineEventHandler<GetViewsResponse>(async (event) => {
         gte: gte ? new Date(gte).toISOString() : undefined,
         lt: lt ? new Date(lt).toISOString() : undefined,
         gt: gt ? new Date(gt).toISOString() : undefined,
-      }
+      },
     },
     select: {
       views: true,

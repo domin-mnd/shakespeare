@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Line } from "vue-chartjs";
-
 import {
   Chart as ChartJS,
   Tooltip,
@@ -17,7 +16,55 @@ ChartJS.register(
   PointElement
 );
 
-const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const { username } = defineProps<{
+  username: string;
+}>();
+
+const weekDays: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const date = new Date();
+
+let gte = new Date(date.setDate(date.getDate() - date.getDay())).toISOString();
+let lte = new Date(date.setDate(date.getDate() - date.getDay() + 6)).toISOString();
+
+const cookie = useCookie("api_key");
+
+if (!cookie.value) {
+  throw createError({
+    statusCode: 401,
+    statusMessage: "Unauthorized",
+  });
+}
+
+const { data, error } = await useFetch("/api/views", {
+  params: {
+    gte,
+    lte,
+    username,
+  },
+  headers: {
+    Authorization: cookie.value,
+  }
+});
+
+if (error.value) {
+  throw createError({
+    statusCode: error.value.statusCode,
+    statusMessage: error.value.statusMessage,
+    message: error.value.message,
+  });
+}
+
+// This one starts with sunday and ends with saturday but we will shift it
+const weekData: number[] = [0, 0, 0, 0, 0, 0, 0];
+
+if (data.value) {
+  for (let upload of data.value) {
+    weekData[new Date(upload.created_at).getDay()] += upload.views;
+  }
+}
+
+const sunday = weekData.shift();
 </script>
 <template>
   <Line
@@ -27,7 +74,7 @@ const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
       datasets: [
         {
           label: 'Views',
-          data: [65, 59, 80, 81, 56, 55, 40],
+          data: [...weekData, sunday ?? 0],
           borderColor: '#C9C9C9',
           pointStyle: false,
         },
@@ -42,6 +89,7 @@ const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
         x: {
           ticks: {
             // This thing is giving useless gap so we basically remove ticks
+            // and make own
             display: false,
           },
           grid: {

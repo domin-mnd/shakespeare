@@ -1,69 +1,77 @@
 import { prisma } from "@/server/libs/database";
 
 /**
- * ## Validate user via lucia-auth
+ * ## Get user by its username
  *
  * Validates the caller user, then returns
- * the userId validated by lucia-auth,
- * also returns whether any users are registered.
- *
- * @see {@link https://github.com/pilcrowOnPaper/lucia/blob/main/examples/nuxt/server/api/user.get.ts Example}
+ * the user found by the username body parameter
  */
 export default defineEventHandler<GetUserResponse>(async (event) => {
-  const authRequest = auth.handleRequest(event);
-  const { user } = await authRequest.validateUser();
+  const url = getRequestURL(event);
+  // Username
+  const username = url.searchParams.get("username");
+  // Amount of uploads to return
+  const quantity = url.searchParams.get("quantity") ?? 15;
+  const apikey = getRequestHeader(event, "authorization");
 
-  if (!user?.userId) {
-    /**
-     * Checks whether any users exist
-     * @see {@link https://github.com/prisma/prisma/issues/5022#issuecomment-1033631629 Prisma exists alternative}
-     */
-    const usersExist = await prisma.authUser
-      .findMany({
-        select: { id: true }, // this line might not be necessary
-        take: 1, // this is the important bit, do not check through all the records
-      })
-      .then((r) => r.length > 0);
+  if (!apikey)
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized",
+      message: "Missing required header - authorization.",
+    });
 
-    return {
-      userId: undefined,
-      body: {},
-      usersExist,
-      statusCode: 200,
-      statusMessage: "OK",
-    };
-  }
+  // Validate required data
+  if (!username)
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Bad Request",
+      message: "Missing required key - username.",
+    });
 
-  const userData = await prisma.authUser.findUnique({
-    where: { id: user.userId },
+  const caller = await prisma.authUser.findUnique({
+    where: { api_key: apikey },
+    select: { id: true },
+  });
+
+  if (!caller)
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
+    });
+
+  // auth.getUser() requires userId, not username
+  const user = await prisma.authKey.findUnique({
+    // Single auth type therefore it is needed to prepend username:
+    where: { id: `username:${username}` },
     select: {
       id: true,
-      nickname: true,
-      avatar_url: true,
-      auth_key: {
-        take: 1,
+      auth_user: {
         select: {
           id: true,
+          nickname: true,
+          avatar_url: true,
+          uploads: {
+            take: +quantity,
+            orderBy: {
+              created_at: "desc",
+            },
+          },
         },
       },
     },
   });
 
-  // Pretty complicated but this gets username from auth_key,
-  // it's stored in id as for example "username:dominnya"
-  // so we get dominnya
-  const username = userData?.auth_key[0].id.split(":")[1];
+  if (!user)
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Not Found",
+      message: "User not found.",
+    });
 
   return {
-    userId: user?.userId,
-    body: {
-      nickname: userData?.nickname,
-      avatar_url: userData?.avatar_url,
-      username,
-    },
-    // it's obvious that any user exists if userId is returned
-    usersExist: true,
-    statusCode: 200,
-    statusMessage: "OK",
+    username: user.id.split(":")[1],
+    ...user.auth_user,
   };
 });

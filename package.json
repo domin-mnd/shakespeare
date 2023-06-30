@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "shakespeare",
   "private": true,
   "scripts": {
     "start": "nuxt start",

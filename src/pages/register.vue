@@ -2,7 +2,7 @@
 definePageMeta({
   layout: "client",
 });
-const { data } = await useFetch("/api/user");
+const { data } = await useFetch("/api/profile");
 
 if (!data.value) throw createError("Failed to fetch data");
 

@@ -19,29 +19,31 @@
   font-family 'Manrope', sans-serif
   box-sizing border-box
 
-body
-  margin 0
-  height 100%
-  background-color cs-background
-  
-  overflow-y scroll
-
-  scrollbar-width thin
-  scrollbar-color cs-outline cs-background
-
-  &::-webkit-scrollbar
-    width 8px
-  
-  &::-webkit-scrollbar-thumb
-    background-color cs-outline
-
-  &::-webkit-scrollbar-track
-    background-color cs-background
-
-
 html
   overflow-y hidden
   height 100vh
+
+  body
+    margin 0
+    background-color cs-background
+    height 100%
+
+    #__nuxt
+      height 100%
+
+      overflow-y scroll
+
+      scrollbar-width thin
+      scrollbar-color cs-outline cs-background
+
+      &::-webkit-scrollbar
+        width 8px
+      
+      &::-webkit-scrollbar-thumb
+        background-color cs-outline
+
+      &::-webkit-scrollbar-track
+        background-color cs-background
 
 // Nuxt layout transitions
 .layout-enter-active,

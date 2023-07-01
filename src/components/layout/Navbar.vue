@@ -73,7 +73,6 @@ const links = [
   padding-bottom ss-xxl-48
 
   @media screen and (max-width 950px)
-    position relative
     overflow-x auto
     overflow-y visible
 
@@ -81,6 +80,7 @@ const links = [
     padding-bottom ss-md-16
 
     border-top 1px solid cs-outline
+    background-color cs-background
     justify-content center
     flex-direction row
 

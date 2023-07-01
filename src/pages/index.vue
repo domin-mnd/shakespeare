@@ -10,61 +10,96 @@ if (!cookie.value) {
 
 const page = ref<number>(1);
 
-const { data, error } = await useFetch("/api/search", {
+const { data, error, refresh, pending } = await useFetch("/api/search", {
   headers: {
     Authorization: cookie.value,
   },
   params: {
     quantity: 10,
     page,
-  }
+  },
+  server: false,
 });
 
-if (error.value)
-  throw createError({
-    statusCode: error.value.statusCode,
-    statusMessage: error.value.statusMessage,
-  });
+if (error.value) throw createError(error.value);
 
-function onScroll(event: Event) {
-  // console.log(event.target.);
+// Do not spam change loadMore value in the infinite scroll
+// Via state
+let loadMore: boolean = false;
+
+async function onScroll(event: Event) {
+  const element = event.target as HTMLElement;
+
+  // Ignore million onScroll calls when the value is already incremented
+  if (
+    Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) <
+      400 &&
+    !loadMore
+  ) {
+    loadMore = true;
+    page.value++;
+    await refresh();
+    loadMore = false;
+    posts = [...(posts ?? []), ...(data.value ?? [])];
+  }
 }
 
-onMounted(() => {  
-  document.onscroll = onScroll;
+onMounted(() => {
+  const layout = document.getElementById("__nuxt");
+  // Add infinite scroll functionality
+  layout?.addEventListener("scroll", onScroll);
 });
 
+let posts = data.value;
+
+watch(pending, () => {
+  if (!data.value?.length && !pending.value && posts) {
+    const layout = document.getElementById("__nuxt");
+    // Remove infinite scroll functionality if there are no more posts
+    layout?.removeEventListener("scroll", onScroll);
+  }
+});
 </script>
 <template>
-  <div class="posts" v-if="data?.length">
-    <div v-for="post in data" :key="post.id">
-      <UiPostNested
-        :avatar="post.author.avatar_url"
-        :nickname="post.author.nickname"
-        :username="post.author.username"
-        :date="post.created_at"
-        :views="post.views"
-        :src="'/' + post.filename + '/raw'"
-        :href="'/' + post.filename"
-      />
+  <div>
+    <div class="posts">
+      <div v-for="post in posts" :key="post.id">
+        <UiPostNested
+          :avatar="post.author.avatar_url"
+          :nickname="post.author.nickname"
+          :username="post.author.username"
+          :date="post.created_at"
+          :views="post.views"
+          :src="'/' + post.filename + '/raw'"
+          :href="'/' + post.filename"
+        />
+      </div>
+      <span class="center" v-show="pending">
+        <UiLoader :loading="pending" />
+      </span>
     </div>
-  </div>
-  <div class="not-found" v-else>
-    <span>
-      No posts over here. <NuxtLink to="/upload" class="link">Make one</NuxtLink>! 🌎
-    </span>
+    <div class="center" v-if="!data?.length && !pending && !posts">
+      <span>
+        No posts over here.
+        <NuxtLink to="/upload" class="link">Make one</NuxtLink>! 🌎
+      </span>
+    </div>
+    <div class="center" v-if="!data?.length && !pending && posts">
+      <span> You've managed to scroll to the end! 🛑 </span>
+    </div>
   </div>
 </template>
 <style lang="stylus" scoped>
 .posts > div
   border-bottom 1px solid cs-outline
 
-.not-found
+.center
   display flex
   justify-content center
   align-items center
-  padding ss-xl-25
-  height 100%
+
+  padding-top ss-xl-25
+  padding-bottom ss-xl-25
 
   .link
     color cs-primary

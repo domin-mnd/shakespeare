@@ -64,7 +64,7 @@ watch(pending, () => {
   <div>
     <div class="posts">
       <div v-for="post in posts" :key="post.id">
-        <UiPostNested
+        <UiPostInner
           :avatar="post.author.avatar_url"
           :nickname="post.author.nickname"
           :username="post.author.username"

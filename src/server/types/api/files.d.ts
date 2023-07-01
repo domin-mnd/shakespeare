@@ -4,6 +4,8 @@
  * @param {string} filename - Entire filename to fetch for
  */
 type GetFileResponse = Omit<import("@prisma/client").Upload, "authorId" | "path"> & {
+  /** Elevated counted views for the upload */
+  views: number;
   /** Upload author */
   author: Omit<import("@prisma/client").AuthUser, "api_key" | "role"> & {
     username: string;

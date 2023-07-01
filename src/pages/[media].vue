@@ -22,7 +22,7 @@ if (error.value?.statusCode !== 404) {
 </script>
 <template>
   <div v-if="(error?.statusCode !== 404)">
-    <UiPostMinified
+    <UiPostOuter
       :avatar="data?.author.avatar_url"
       :nickname="data?.author.nickname"
       :username="(data?.author.username as string)"

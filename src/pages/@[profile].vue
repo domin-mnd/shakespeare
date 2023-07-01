@@ -39,6 +39,10 @@ if (state.value.username !== route.fullPath.split("@")[1]) {
     notFound = true;
   }
 }
+
+useHead({
+  title: user.nickname || user.username || "No user found!",
+});
 </script>
 <template>
   <div v-if="!notFound">

@@ -21,7 +21,10 @@ export default defineEventHandler(async (event) => {
       message: "File not found.",
     });
 
-  setHeader(event, "Content-Type", url.mimetype);
+  setHeaders(event, {
+    "Content-Type": url.mimetype,
+    "Cache-Control": "public, max-age=63072000, s-maxage=63072000, stale-while-revalidate=86400",
+  });
 
   // sendStream alternative with node:https get
   await new Promise((resolve, reject) => {

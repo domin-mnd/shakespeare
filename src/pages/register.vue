@@ -1,12 +1,17 @@
 <script lang="ts" setup>
-definePageMeta({
-  layout: "client",
-});
 const { data } = await useFetch("/api/profile");
 
 if (!data.value) throw createError("Failed to fetch data");
 
 if (data.value.userId || data.value.usersExist) navigateTo("/login");
+
+definePageMeta({
+  layout: "client",
+});
+
+useHead({
+  title: "Register",
+});
 
 const usernameErrors: string[] = [
   "Username should be lowercase and can only include latin characters, numbers & underscore",

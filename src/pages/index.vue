@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+useHead({
+  title: "Shakespeare",
+});
+
 const cookie = useCookie("api_key");
 
 if (!cookie.value) {

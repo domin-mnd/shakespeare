@@ -27,6 +27,8 @@ const presetLetterSize = size * 0.7 + "px";
   object-fit cover
   width v-bind(avatarSize)
   height v-bind(avatarSize)
+  background-color cs-outline
+  color transparent
 
   &.preset
     display flex

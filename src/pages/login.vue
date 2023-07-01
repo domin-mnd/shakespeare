@@ -10,6 +10,10 @@ definePageMeta({
   layout: "client",
 });
 
+useHead({
+  title: "Login",
+});
+
 interface Modal {
   title: string;
   content: string;

@@ -13,6 +13,7 @@ const { data, error } = await useFetch("/api/files", {
 
 if (error.value?.statusCode !== 404) {
   useHead({
+    title: data.value?.filename,
     meta: [
       { name: "og:image", content: route.fullPath + "/raw" },
       { name: "twitter:card", content: "summary_large_image" },

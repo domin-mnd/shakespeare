@@ -1,9 +1,7 @@
 /** Single view type */
 interface ViewResponse {
-  /** Upload creation date */
+  /** View creation date */
   created_at: Date;
-  /** Amount of views for the upload */
-  views: number;
 }
 
 /**

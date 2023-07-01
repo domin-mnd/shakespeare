@@ -21,10 +21,9 @@
 
 body
   margin 0
+  height 100%
   background-color cs-background
-
-
-html
+  
   overflow-y scroll
 
   scrollbar-width thin
@@ -38,6 +37,11 @@ html
 
   &::-webkit-scrollbar-track
     background-color cs-background
+
+
+html
+  overflow-y hidden
+  height 100vh
 
 // Nuxt layout transitions
 .layout-enter-active,

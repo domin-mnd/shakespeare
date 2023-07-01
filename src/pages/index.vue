@@ -8,10 +8,16 @@ if (!cookie.value) {
   });
 }
 
-const { data, error } = useFetch("/api/search", {
+const page = ref<number>(1);
+
+const { data, error } = await useFetch("/api/search", {
   headers: {
     Authorization: cookie.value,
   },
+  params: {
+    quantity: 10,
+    page,
+  }
 });
 
 if (error.value)
@@ -19,6 +25,14 @@ if (error.value)
     statusCode: error.value.statusCode,
     statusMessage: error.value.statusMessage,
   });
+
+function onScroll(event: Event) {
+  // console.log(event.target.);
+}
+
+onMounted(() => {  
+  document.onscroll = onScroll;
+});
 
 </script>
 <template>

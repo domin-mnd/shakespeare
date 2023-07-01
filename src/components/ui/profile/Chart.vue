@@ -58,10 +58,8 @@ if (error.value) {
 // This one starts with sunday and ends with saturday but we will shift it
 const weekData: number[] = [0, 0, 0, 0, 0, 0, 0];
 
-if (data.value) {
-  for (let upload of data.value) {
-    weekData[new Date(upload.created_at).getDay()] += upload.views;
-  }
+for (let upload of (data?.value ?? [])) {
+  weekData[new Date(upload.created_at).getDay()] += 1;
 }
 
 const sunday = weekData.shift();

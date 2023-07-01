@@ -33,7 +33,7 @@ model Upload {
   mimetype   String
   slug       String     @unique
   created_at DateTime   @default(now())
-  views      Int        @default(0)
+  views      View[]
   path       String     @unique
   type       UploadType
 
@@ -41,8 +41,16 @@ model Upload {
   authorId String
 
   // Upload query performance response
-  @@index([filename, views])
+  @@index([filename])
   @@map("upload")
+}
+
+// Each view is counted no matter what IP
+model View {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  upload     Upload   @relation(fields: [uploadId], references: [id])
+  uploadId   Int
 }
 
 enum UploadType {

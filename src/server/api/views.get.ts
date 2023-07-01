@@ -8,11 +8,11 @@ import { prisma } from "@/server/libs/database";
  */
 export default defineEventHandler<GetViewsResponse>(async (event) => {
   const url = getRequestURL(event);
-  // Ranges
-  const lte = url.searchParams.get("lte"); // Less than or equal to
-  const gte = url.searchParams.get("gte"); // Greater than or equal to
-  const lt = url.searchParams.get("lt"); // Less than or equal
-  const gt = url.searchParams.get("gt"); // Greater than or equal
+  // Ranges, convert nullish to undefined
+  const lte = url.searchParams.get("lte") ?? undefined; // Less than or equal to
+  const gte = url.searchParams.get("gte") ?? undefined; // Greater than or equal to
+  const lt = url.searchParams.get("lt") ?? undefined; // Less than or equal
+  const gt = url.searchParams.get("gt") ?? undefined; // Greater than or equal
   const username = url.searchParams.get("username");
 
   // Checkout cuid API key, authorization header key for every user
@@ -58,24 +58,23 @@ export default defineEventHandler<GetViewsResponse>(async (event) => {
       message: "User not found.",
     });
 
-  const upload = await prisma.upload.findMany({
+  const views = await prisma.view.findMany({
     where: {
-      authorId: user.id,
+      upload: {
+        authorId: user.id,
+      },
       // Date range e.g.
       // lte: "2022-01-30"
       // gte: "2022-01-15"
       created_at: {
-        lte: lte ? new Date(lte).toISOString() : undefined,
-        gte: gte ? new Date(gte).toISOString() : undefined,
-        lt: lt ? new Date(lt).toISOString() : undefined,
-        gt: gt ? new Date(gt).toISOString() : undefined,
+        // Converted toISOStrings
+        lte, gte, lt, gt
       },
     },
     select: {
-      views: true,
       created_at: true,
     },
   });
 
-  return upload;
+  return views;
 });

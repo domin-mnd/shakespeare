@@ -6,7 +6,7 @@ const {
 }>();
 </script>
 <template>
-  <img :src="src" class="image" />
+  <img :src="src" class="image" loading="lazy" />
 </template>
 <style lang="stylus" scoped>
 .image

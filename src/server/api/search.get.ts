@@ -58,6 +58,11 @@ export default defineEventHandler<SearchResponse>(async (event) => {
       ...condition,
     },
     include: {
+      _count: {
+        select: {
+          views: true,
+        },
+      },
       author: {
         select: {
           id: true,
@@ -76,6 +81,9 @@ export default defineEventHandler<SearchResponse>(async (event) => {
 
   return upload.map((file) => ({
     ...file,
+    // Remove _count as unnecessary
+    _count: undefined,
+    views: file._count.views,
     // Remove authorId as unnecessary
     authorId: undefined,
     author: {

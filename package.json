@@ -1,6 +1,7 @@
 {
   "name": "shakespeare",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "start": "nuxt start",
     "build": "nuxt build",

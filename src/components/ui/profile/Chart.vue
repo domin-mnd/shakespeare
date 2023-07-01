@@ -30,21 +30,18 @@ let lte = new Date(date.setDate(date.getDate() - date.getDay() + 6)).toISOString
 const cookie = useCookie("api_key");
 
 if (!cookie.value) {
-  throw createError({
-    statusCode: 401,
-    statusMessage: "Unauthorized",
-  });
+  await navigateTo("/login");
 }
 
 const { data, error } = await useFetch("/api/views", {
+  headers: {
+    Authorization: cookie.value as string,
+  },
   params: {
     gte,
     lte,
     username,
   },
-  headers: {
-    Authorization: cookie.value,
-  }
 });
 
 if (error.value) {
@@ -63,10 +60,13 @@ for (let upload of (data?.value ?? [])) {
 }
 
 const sunday = weekData.shift();
+
+const showTicks = ref(false);
 </script>
 <template>
   <Line
     id="chart"
+    @vnode-mounted="showTicks = true"
     :data="{
       labels: weekDays,
       datasets: [
@@ -119,7 +119,7 @@ const sunday = weekData.shift();
       },
     }"
   />
-  <div id="week-days">
+  <div id="week-days" v-show="showTicks">
     <span v-for="day in weekDays" :key="day">{{ day }}</span>
   </div>
 </template>

@@ -16,6 +16,8 @@ export default defineEventHandler<SearchResponse>(async (event) => {
   const page = url.searchParams.get("page") ?? 1;
   // Filename query
   const filename = url.searchParams.get("query") ?? "";
+  // Username to check posts for
+  const username = url.searchParams.get("username");
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");
 
@@ -28,7 +30,15 @@ export default defineEventHandler<SearchResponse>(async (event) => {
 
   const user = await prisma.authUser.findUnique({
     where: { api_key: apikey },
-    select: { id: true, role: true },
+    select: {
+      id: true,
+      role: true,
+      auth_key: {
+        select: {
+          id: true,
+        },
+      },
+    },
   });
 
   if (!user)
@@ -38,12 +48,29 @@ export default defineEventHandler<SearchResponse>(async (event) => {
       message: "Invalid credentials.",
     });
 
-  const condition =
+  const userUsername = user.auth_key[0].id.split(":")[1];
+
+  if (username && username !== userUsername && user.role !== "ADMIN")
+    return [];
+
+  const everyUser =
     user.role === "ADMIN"
       ? {}
       : {
           authorId: user.id,
         };
+
+  const certainUser = username
+    ? {
+        author: {
+          auth_key: {
+            some: {
+              id: `username:${username}`,
+            },
+          },
+        },
+      }
+    : {};
 
   const upload = await prisma.upload.findMany({
     skip: (+page - 1) * +quantity,
@@ -55,7 +82,8 @@ export default defineEventHandler<SearchResponse>(async (event) => {
       filename: {
         contains: filename,
       },
-      ...condition,
+      ...certainUser,
+      ...everyUser,
     },
     include: {
       _count: {
@@ -72,10 +100,10 @@ export default defineEventHandler<SearchResponse>(async (event) => {
             take: 1,
             select: {
               id: true,
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     },
   });
 

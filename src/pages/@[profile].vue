@@ -7,18 +7,15 @@ const user = {
   avatarUrl: state.value.avatar_url,
   nickname: state.value.nickname,
   username: state.value.username as string,
-  withEditButton: true,
+  isProfile: true,
 };
 
 if (state.value.username !== route.fullPath.split("@")[1]) {
-  user.withEditButton = false;
+  user.isProfile = false;
   const cookie = useCookie("api_key");
 
   if (!cookie.value) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-    });
+    await navigateTo("/login");
   }
 
   const { data } = await useFetch("/api/user", {
@@ -27,7 +24,7 @@ if (state.value.username !== route.fullPath.split("@")[1]) {
       quantity: 15,
     },
     headers: {
-      Authorization: cookie.value,
+      Authorization: cookie.value as string,
     },
   });
 
@@ -43,6 +40,12 @@ if (state.value.username !== route.fullPath.split("@")[1]) {
 useHead({
   title: user.nickname || user.username || "No user found!",
 });
+
+onMounted(() => {
+  // When visiting profile scroll to top
+  const layout = document.getElementById("__nuxt");
+  layout?.scrollTo(0, 0);
+});
 </script>
 <template>
   <div v-if="!notFound">
@@ -50,9 +53,14 @@ useHead({
       :avatar-url="user.avatarUrl"
       :nickname="user.nickname"
       :username="user.username"
-      :with-edit-button="user.withEditButton"
+      :with-edit-button="user.isProfile"
     />
     <UiProfileChart :username="user.username" />
+    <div class="user-posts">      
+      <UiUploads :username="user.username">
+        <template v-slot:no-posts><span></span></template>
+      </UiUploads>
+    </div>
   </div>
   <div v-else>
     <UiProfileHeader
@@ -61,3 +69,7 @@ useHead({
     />
   </div>
 </template>
+<style lang="stylus" scoped>
+.user-posts
+  margin-top ss-xl-25
+</style>

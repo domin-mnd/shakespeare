@@ -10,8 +10,6 @@ export default defineEventHandler<GetUserResponse>(async (event) => {
   const url = getRequestURL(event);
   // Username
   const username = url.searchParams.get("username");
-  // Amount of uploads to return
-  const quantity = url.searchParams.get("quantity") ?? 15;
   const apikey = getRequestHeader(event, "authorization");
 
   if (!apikey)
@@ -52,12 +50,6 @@ export default defineEventHandler<GetUserResponse>(async (event) => {
           id: true,
           nickname: true,
           avatar_url: true,
-          uploads: {
-            take: +quantity,
-            orderBy: {
-              created_at: "desc",
-            },
-          },
         },
       },
     },

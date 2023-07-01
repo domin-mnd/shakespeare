@@ -32,6 +32,7 @@ html
       height 100%
 
       overflow-y scroll
+      scroll-behavior smooth
 
       scrollbar-width thin
       scrollbar-color cs-outline cs-background

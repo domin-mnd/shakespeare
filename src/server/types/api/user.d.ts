@@ -50,8 +50,6 @@ interface GetUserResponse {
   avatar_url: string | null;
   /** User username */
   username: string;
-  /** User uploads, depends on quantity searchParam */
-  uploads: import("@prisma/client").Upload[];
 }
 
 /**

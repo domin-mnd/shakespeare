@@ -23,9 +23,12 @@ const { username } = defineProps<{
 const weekDays: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const date = new Date();
+// I hate it when week starts with sunday
+const getISODay = (date: Date) => (date.getDay() + 6) % 7;
 
-let gte = new Date(date.setDate(date.getDate() - date.getDay())).toISOString();
-let lte = new Date(date.setDate(date.getDate() - date.getDay() + 6)).toISOString();
+const first = date.setDate(date.getDate() - getISODay(date));
+let gte = new Date(first).toISOString();
+let lte = new Date(date.setDate(new Date(first).getDate() + 6)).toISOString();
 
 const cookie = useCookie("api_key");
 
@@ -55,75 +58,79 @@ if (error.value) {
 // This one starts with sunday and ends with saturday but we will shift it
 const weekData: number[] = [0, 0, 0, 0, 0, 0, 0];
 
-for (let upload of (data?.value ?? [])) {
+for (let upload of data?.value ?? []) {
   weekData[new Date(upload.created_at).getDay()] += 1;
 }
 
 const sunday = weekData.shift();
-
-const showTicks = ref(false);
 </script>
 <template>
-  <Line
-    id="chart"
-    @vnode-mounted="showTicks = true"
-    :data="{
-      labels: weekDays,
-      datasets: [
-        {
-          label: 'Views',
-          data: [...weekData, sunday ?? 0],
-          borderColor: '#C9C9C9',
-          pointStyle: false,
-        },
-      ],
-    }"
-    :options="{
-      responsive: true,
-      layout: {
-        autoPadding: false,
-      },
-      scales: {
-        x: {
-          ticks: {
-            // This thing is giving useless gap so we basically remove ticks
-            // and make own
-            display: false,
+  <div class="chart-parent">
+    <Line
+      id="chart"
+      :data="{
+        labels: weekDays,
+        datasets: [
+          {
+            label: 'Views',
+            data: [...weekData, sunday ?? 0],
+            borderColor: '#C9C9C9',
+            pointStyle: false,
           },
-          grid: {
-            color: (context) => {
-              if (
-                context.index === context.chart.scales.x.ticks.length - 1 ||
-                context.index === 0
-              )
-                return 'transparent';
-              return '#383838';
+        ],
+      }"
+      :options="{
+        responsive: true,
+        layout: {
+          autoPadding: false,
+        },
+        scales: {
+          x: {
+            ticks: {
+              // This thing is giving useless gap so we basically remove ticks
+              // and make own
+              display: false,
             },
-            drawTicks: false,
-          },
-        },
-        y: {
-          ticks: {
-            maxTicksLimit: 6,
-            display: false,
-          },
-          grid: {
-            color: (context) => {
-              if (context.index === context.chart.scales.y.ticks.length - 1)
-                return 'transparent';
-              return '#383838';
+            grid: {
+              color: (context) => {
+                if (
+                  context.index === context.chart.scales.x.ticks.length - 1 ||
+                  context.index === 0
+                )
+                  return 'transparent';
+                return '#383838';
+              },
+              drawTicks: false,
             },
-            drawTicks: false,
+          },
+          y: {
+            ticks: {
+              maxTicksLimit: 6,
+              display: false,
+            },
+            grid: {
+              color: (context) => {
+                if (context.index === context.chart.scales.y.ticks.length - 1)
+                  return 'transparent';
+                return '#383838';
+              },
+              drawTicks: false,
+            },
           },
         },
-      },
-    }"
-  />
-  <div id="week-days" v-show="showTicks">
+      }"
+    />
+  </div>
+  <div id="week-days">
     <span v-for="day in weekDays" :key="day">{{ day }}</span>
   </div>
 </template>
 <style lang="stylus" scoped>
+// Chart.js is dependent on parent element for responsiveness
+.chart-parent
+  width 100%
+  aspect-ratio 2
+
 #week-days
   display flex
   justify-content space-between

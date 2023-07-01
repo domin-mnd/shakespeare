@@ -7,13 +7,16 @@ const { avatar, nickname, username, date, views, src } = defineProps<{
   views: number;
   src: string;
 }>();
+
+const cookie = useCookie("api_key");
 </script>
 <template>
   <div class="post">
     <div class="author">
       <UiAvatar :src="avatar" :nickname="nickname || username" :size="48" />
       <div class="user">
-        <span class="nickname">{{ nickname || username }}</span>
+        <span class="nickname" v-if="!cookie">{{ nickname || username }}</span>
+        <NuxtLink class="nickname link" :to="`/@${username}`" v-else>{{ nickname || username }}</NuxtLink>
         <span v-if="nickname" class="username">@{{ username }}</span>
       </div>
     </div>
@@ -48,6 +51,14 @@ const { avatar, nickname, username, date, views, src } = defineProps<{
       .nickname
         font-size fs-md-16
         color cs-primary
+
+        &.link
+          text-decoration none
+
+          &:hover
+            text-decoration underline
+            text-underline-offset 3px
+            text-decoration-thickness 1px
 
       .username
         font-size fs-md-14

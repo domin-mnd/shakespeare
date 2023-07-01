@@ -21,7 +21,6 @@ if (state.value.username !== route.fullPath.split("@")[1]) {
   const { data } = await useFetch("/api/user", {
     params: {
       username: route.fullPath.split("@")[1],
-      quantity: 15,
     },
     headers: {
       Authorization: cookie.value as string,
@@ -55,8 +54,8 @@ onMounted(() => {
       :username="user.username"
       :with-edit-button="user.isProfile"
     />
-    <UiProfileChart :username="user.username" />
-    <div class="user-posts">      
+    <UiProfileChart :username="user.username"/>
+    <div class="user-posts">
       <UiUploads :username="user.username">
         <template v-slot:no-posts><span></span></template>
       </UiUploads>

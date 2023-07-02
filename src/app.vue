@@ -18,6 +18,7 @@
 *
   font-family 'Manrope', sans-serif
   box-sizing border-box
+  -webkit-tap-highlight-color transparent
 
 html
   overflow-y hidden

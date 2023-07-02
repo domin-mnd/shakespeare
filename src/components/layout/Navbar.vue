@@ -81,6 +81,7 @@ const links = [
 
     border-top 1px solid cs-outline
     background-color cs-background
+    z-index 10
     justify-content center
     flex-direction row
 

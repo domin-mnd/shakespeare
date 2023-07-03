@@ -25,7 +25,8 @@ const {
 .box
   display flex
   flex-direction column
-  max-width 500px
+  max-width 400px
+  width 100%
   margin 0 ss-md-16
 
   border-radius rs-lg-10

@@ -46,7 +46,7 @@ async function onScroll(event: Event) {
     page.value++;
     await refresh();
     loadMore = false;
-    posts = [...(posts ?? []), ...(data.value ?? [])];
+    posts.value = [...(posts.value ?? []), ...(data.value ?? [])];
   }
 }
 
@@ -56,7 +56,7 @@ onMounted(() => {
   layout?.addEventListener("scroll", onScroll);
 });
 
-let posts = data.value;
+let posts = ref(data.value);
 
 watch(pending, () => {
   if (!data.value?.length && !pending.value && posts) {
@@ -67,8 +67,8 @@ watch(pending, () => {
 });
 </script>
 <template>
-  <div>
-    <div class="posts">
+  <div class="posts" v-bind="$attrs">
+    <slot name="posts" :posts="posts">
       <div v-for="post in posts" :key="post.id">
         <UiPostInner
           :avatar="post.author.avatar_url"
@@ -80,23 +80,23 @@ watch(pending, () => {
           :href="'/' + post.filename"
         />
       </div>
-      <span class="center" v-show="pending">
-        <UiLoader :loading="pending" />
+    </slot>
+    <span class="center" v-show="pending">
+      <UiLoader :loading="pending" />
+    </span>
+  </div>
+  <div class="center" v-if="!data?.length && !pending && !(posts ?? []).length">
+    <slot name="no-posts">
+      <span>
+        No posts over here.
+        <NuxtLink to="/upload" class="link">Make one</NuxtLink>! 🌎
       </span>
-    </div>
-    <div class="center" v-if="!data?.length && !pending && !(posts ?? []).length">
-      <slot name="no-posts">
-        <span>
-          No posts over here.
-          <NuxtLink to="/upload" class="link">Make one</NuxtLink>! 🌎
-        </span>
-      </slot>
-    </div>
-    <div class="center" v-if="!data?.length && !pending && (posts ?? []).length">
-      <slot name="no-posts-left">
-        <span>You've managed to scroll to the end! 🛑</span>
-      </slot>
-    </div>
+    </slot>
+  </div>
+  <div class="center" v-if="!data?.length && !pending && (posts ?? []).length">
+    <slot name="no-posts-left">
+      <span>No more posts over here...</span>
+    </slot>
   </div>
 </template>
 <style lang="stylus" scoped>

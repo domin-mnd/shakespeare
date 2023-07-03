@@ -1,18 +1,24 @@
+<script lang="ts" setup>
+const { variant } = defineProps<{
+  variant?: "primary" | "secondary";
+}>();
+</script>
 <template>
-  <button class="button" v-bind="$attrs">
+  <button
+    class="button"
+    :class="variant ?? 'primary'"
+  >
     <slot />
   </button>
 </template>
 <style lang="stylus" scoped>
 .button
   border-radius rs-sm-4
-  border 1px solid cs-secondary
   outline none
-  background-color cs-secondary
+  border none
 
   transition all .3s ease
 
-  color cs-outline
   font-size fs-md-16
   cursor pointer
 
@@ -24,13 +30,32 @@
 
   &:hover
     transition all .3s ease
-    border 1px solid cs-secondary
-    background-color cs-primary
-  
-  &:focus
-    transition all .3s ease
-    border 1px solid cs-secondary
-    background-color cs-background
-    color cs-secondary
 
+  &:active
+    transition all .3s ease
+
+  &.primary
+    background-color cs-secondary
+    color cs-outline
+    fill cs-outline
+
+    &:hover
+      background-color cs-primary
+    
+    &:active
+      opacity .5
+  
+  &.secondary
+    background-color transparent
+    border 1px solid cs-dimmed
+    color cs-dimmed
+    fill cs-dimmed
+
+    &:hover
+      border 1px solid cs-secondary
+      color cs-secondary
+      fill cs-secondary
+
+    &:active
+      opacity .5
 </style>

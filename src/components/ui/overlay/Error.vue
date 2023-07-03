@@ -4,6 +4,18 @@ const { show, title, content } = defineProps<{
   title: string;
   content: string;
 }>();
+
+const emit = defineEmits<{
+  (event: "close"): void;
+}>();
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape") emit("close");
+}
+
+onMounted(() => {
+  window.onkeydown = onKeydown;
+});
 </script>
 <template>
   <UiOverlay :show="show" :opacity="0.5">

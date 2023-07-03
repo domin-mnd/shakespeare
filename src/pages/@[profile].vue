@@ -54,21 +54,64 @@ onMounted(() => {
       :username="user.username"
       :with-edit-button="user.isProfile"
     />
-    <UiProfileChart :username="user.username"/>
-    <div class="user-posts">
-      <UiUploads :username="user.username">
-        <template v-slot:no-posts><span></span></template>
-      </UiUploads>
-    </div>
+    <UiProfileChart :username="user.username" />
+    <UiUploads :username="user.username">
+      <template v-slot:posts="{ posts }">
+        <div class="compact-user-posts">
+          <div class="column">
+            <template v-for="(post, index) in posts" :key="index">
+              <NuxtLink
+                v-if="index % 2 === 0"
+                :to="'/' + post.filename"
+                class="link"
+              >
+                <UiPostMedia :src="'/' + post.filename + '/raw'" />
+              </NuxtLink>
+            </template>
+          </div>
+          <div class="column">
+            <template v-for="(post, index) in posts" :key="index">
+              <NuxtLink
+                v-if="index % 2 === 1"
+                :to="'/' + post.filename"
+                class="link"
+              >
+                <UiPostMedia :src="'/' + post.filename + '/raw'" />
+              </NuxtLink>
+            </template>
+          </div>
+        </div>
+      </template>
+      <template v-slot:no-posts><span></span></template>
+    </UiUploads>
   </div>
   <div v-else>
-    <UiProfileHeader
-      username="No user found!"
-      :with-edit-button="false"
-    />
+    <UiProfileHeader username="No user found!" :with-edit-button="false" />
   </div>
 </template>
-<style lang="stylus" scoped>
-.user-posts
+<style lang="stylus">
+.compact-user-posts
   margin-top ss-xl-25
+  display grid
+  grid-template-columns 1fr 1fr
+  padding ss-sm-10
+  gap ss-sm-10
+
+  .column
+    display flex
+    flex-direction column
+    gap ss-sm-10
+    border-bottom none
+
+  .link
+    font-size 0
+    transition opacity .3s ease
+
+    &:hover
+      transition opacity .3s ease
+      opacity 0.7
+
+    &:active
+      transition opacity .3s ease
+      opacity 0.5
 </style>

@@ -23,6 +23,10 @@ const { username } = defineProps<{
 const weekDays: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const date = new Date();
+date.setHours(0);
+date.setMinutes(0);
+date.setSeconds(0);
+date.setMilliseconds(0);
 // I hate it when week starts with sunday
 const getISODay = (date: Date) => (date.getDay() + 6) % 7;
 

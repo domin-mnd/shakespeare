@@ -10,5 +10,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <UiUploads />
+  <div>
+    <UiUploads />
+  </div>
 </template>

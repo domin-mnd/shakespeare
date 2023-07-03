@@ -4,5 +4,8 @@ useHead({
 });
 </script>
 <template>
-  <div>3</div>
+  <div>
+    <UiSearchHeader />
+    3
+  </div>
 </template>

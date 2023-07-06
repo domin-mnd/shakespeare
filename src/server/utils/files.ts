@@ -70,7 +70,7 @@ export async function streamFilesToSimpleStorage(
           data: {
             filename,
             mimetype: fileMimeType,
-            slug,
+            extension: fileExtension ?? "",
             path: `${getSimpleStorageURL()}/${slug}`,
             authorId: userId,
             type: "FILE",
@@ -90,7 +90,7 @@ export const deleteFileFromSimpleStorage = async (
 ): Promise<import("@aws-sdk/client-s3").DeleteObjectCommandOutput | null> => {
   const command = new DeleteObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME,
-    Key: filename, // slug
+    Key: filename, // slug aka [name].[extension]
   });
 
   try {

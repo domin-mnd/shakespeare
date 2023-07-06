@@ -19,7 +19,8 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
       select: { id: true }, // this line might not be necessary
       take: 1, // this is the important bit, do not check through all the records
     })
-    .then((r) => r.length > 0);
+    .then((r) => r.length > 0)
+    .catch(() => false);
 
   // Do not do authorization validation if there are no users registered yet
   if (usersExist) {

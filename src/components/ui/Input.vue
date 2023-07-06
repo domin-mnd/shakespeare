@@ -10,29 +10,58 @@ function onFileChange(event: Event) {
   const files = (event.target as HTMLInputElement).files;
   if (!files) return;
 
-  const input = document.querySelector(".file-wrapper .text") as HTMLInputElement;
+  const input = document.querySelector(
+    ".file-wrapper .text"
+  ) as HTMLInputElement;
   if (!input) return;
 
   input.value = files[0].name;
 }
 
 function onInputChange() {
-  const files = document.querySelector(".file.input input[type=file]") as HTMLInputElement;
+  const files = document.querySelector(
+    ".file.input input[type=file]"
+  ) as HTMLInputElement;
   if (!files) return;
 
   // Remove file from input
   files.value = "";
 }
+
+const input = ref(null);
+defineExpose({
+  input,
+});
 </script>
 <template>
   <div v-if="type === 'file'" class="file-wrapper">
-    <input type="text" class="text input splice" :name="fieldName+'Url'" :placeholder="placeholder" @input="onInputChange" />
+    <input
+      type="text"
+      class="text input splice"
+      :name="fieldName + 'Url'"
+      :placeholder="placeholder"
+      @input="onInputChange"
+    />
     <label class="file input">
-      <input type="file" v-bind="$attrs" :name="fieldName" @change="onFileChange" />
+      <input
+        type="file"
+        :name="fieldName"
+        @change="onFileChange"
+        ref="input"
+        v-bind="$attrs"
+      />
       Select File
     </label>
   </div>
-  <input v-else :type="type" :placeholder="placeholder" :name="fieldName" class="text input" />
+  <input
+    v-else
+    :type="type"
+    :placeholder="placeholder"
+    :name="fieldName"
+    class="text input"
+    ref="input"
+    v-bind="$attrs"
+  />
 </template>
 <style lang="stylus" scoped>
 .file-wrapper
@@ -50,7 +79,7 @@ function onInputChange() {
 
     input[type="file"]
       display none
-    
+
     &:hover
       border 1px solid cs-dimmed
 
@@ -89,5 +118,4 @@ function onInputChange() {
 
   padding-left ss-md-15
   padding-right ss-md-15
-
 </style>

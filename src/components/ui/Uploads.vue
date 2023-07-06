@@ -3,10 +3,20 @@ const {
   username,
   quantity = 10,
   page = ref<number>(1),
+  fetcher,
 } = defineProps<{
   username?: string;
   quantity?: number;
   page?: Ref<number>;
+  fetcher?: ({
+    quantity,
+    page,
+    username,
+  }: {
+    quantity: number;
+    page: Ref<number>;
+    username?: string;
+  }) => any;
 }>();
 
 const cookie = useCookie("api_key");
@@ -15,24 +25,41 @@ if (!cookie.value) {
   await navigateTo("/login");
 }
 
-const { data, pending, error, refresh } = await useFetch("/api/search", {
-  headers: {
-    Authorization: cookie.value as string,
-  },
-  params: {
+const { data, pending, error, refresh, execute, status } = await (
+  fetcher?.({
     quantity,
     page,
     username,
-  },
-  server: false,
-});
+  }) ??
+    useLazyFetch("/api/search", {
+      headers: {
+        Authorization: cookie.value as string,
+      },
+      params: {
+        quantity,
+        page,
+        username,
+      },
+      server: false,
+    })
+);
 
 if (error.value) throw createError(error.value);
+
+let initiallyLoaded = false;
 
 // Do not spam change loadMore value in the infinite scroll
 // Via state
 let loadMore: boolean = false;
 
+let posts = ref(data.value);
+
+watch(data, () => {
+  if (!initiallyLoaded) {
+    posts.value = data.value;
+    initiallyLoaded = true;
+  }
+});
 async function onScroll(event: Event) {
   const element = event.target as HTMLElement;
 
@@ -46,7 +73,8 @@ async function onScroll(event: Event) {
     page.value++;
     await refresh();
     loadMore = false;
-    posts.value = [...(posts.value ?? []), ...(data.value ?? [])];
+    posts.value.push(...data.value);
+    // posts.value = [...(posts.value ?? []), ...()];
   }
 }
 
@@ -56,8 +84,6 @@ onMounted(() => {
   layout?.addEventListener("scroll", onScroll);
 });
 
-let posts = ref(data.value);
-
 watch(pending, () => {
   if (!data.value?.length && !pending.value && posts) {
     const layout = document.getElementById("__nuxt");
@@ -65,6 +91,8 @@ watch(pending, () => {
     layout?.removeEventListener("scroll", onScroll);
   }
 });
+
+defineExpose({ data, pending, error, refresh, execute });
 </script>
 <template>
   <div class="posts" v-bind="$attrs">
@@ -81,14 +109,23 @@ watch(pending, () => {
         />
       </div>
     </slot>
-    <span class="center" v-show="pending">
-      <UiLoader :loading="pending" />
-    </span>
   </div>
-  <div class="center" v-if="!data?.length && !pending && !(posts ?? []).length">
+  <div v-if="pending && status === 'pending'">
+    <slot name="pending">
+      <span class="center">
+        <UiLoader :loading="pending" />
+      </span>
+    </slot>
+  </div>
+  <div v-if="pending && status === 'idle'">
+    <slot name="idle">
+      <span class="center"> Nothing just yet... </span>
+    </slot>
+  </div>
+  <div v-if="!data?.length && !pending && !(posts ?? []).length">
     <slot name="no-posts">
-      <span>
-        No posts over here.
+      <span class="center">
+        No posts over here.{{ " " }}
         <NuxtLink to="/upload" class="link">Make one</NuxtLink>! 🌎
       </span>
     </slot>
@@ -107,12 +144,13 @@ watch(pending, () => {
   display flex
   justify-content center
   align-items center
+  color cs-dimmed
 
   padding-top ss-xl-25
   padding-bottom ss-xl-25
 
   .link
-    color cs-primary
+    color cs-secondary
     text-decoration none
 
     &:hover

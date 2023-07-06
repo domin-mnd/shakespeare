@@ -37,7 +37,7 @@ export default defineEventHandler<GetFileResponse>(async (event) => {
       id: true,
       filename: true,
       mimetype: true,
-      slug: true,
+      extension: true,
       created_at: true,
       type: true,
       _count: {

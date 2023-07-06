@@ -26,6 +26,7 @@ onMounted(() => {
   transition all .3s ease
   opacity 0
   pointer-events none
+  z-index 100
 
   &.show
     transition all .3s ease

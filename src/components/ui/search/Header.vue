@@ -2,10 +2,25 @@
 import RiFilter2Fill from "vue-remix-icons/ri-filter-2-fill.vue";
 
 const filterModalOpened = ref<boolean>(false);
+
+const inputElement = ref<{ input: HTMLInputElement } | null>(null);
+const inputValue = ref<string>("");
+
+function onInputChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+
+  inputValue.value = input.value;
+}
+
+onMounted(() => {
+  inputElement.value?.input?.addEventListener("input", onInputChange);
+});
+
+defineExpose({ inputValue });
 </script>
 <template>
   <div class="header">
-    <UiInput placeholder="Input search..." class="searchbar" />
+    <UiInput placeholder="Input search..." class="searchbar" ref="inputElement" />
     <UiButton
       class="filter"
       variant="secondary"

@@ -46,7 +46,7 @@ export default defineEventHandler<DeleteFileResponse>(async (event) => {
     });
 
   const file = await prisma.upload.findUnique({
-    where: { slug: filename },
+    where: { filename },
     select: { authorId: true },
   });
 
@@ -80,7 +80,7 @@ export default defineEventHandler<DeleteFileResponse>(async (event) => {
     // I could make it not awaiting the upload
     // but it depends on the database
     await prisma.upload.delete({
-      where: { slug: filename },
+      where: { filename },
     });
   } catch (error) {
     console.error(error);

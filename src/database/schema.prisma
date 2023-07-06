@@ -31,7 +31,7 @@ model Upload {
 
   filename   String     @unique
   mimetype   String
-  slug       String     @unique
+  extension  String
   created_at DateTime   @default(now())
   views      View[]
   path       String     @unique

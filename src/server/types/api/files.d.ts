@@ -18,7 +18,7 @@ type GetFileResponse = Omit<import("@prisma/client").Upload, "authorId" | "path"
  * @header Authorization
  * @header Content-Type
  */
-type CreateFileResponse = string;
+type CreateFileResponse = Promise<string>;
 
 /**
  * ### DELETE `/api/files` success response

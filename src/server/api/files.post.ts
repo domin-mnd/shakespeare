@@ -14,7 +14,7 @@ import { ShorteningType } from "@/server/libs/constants";
  * - `creation` - Create record in database - SQL-only.
  * Can't be done asynchronously because of `initialization` data needed.
  *
- * @returns {string} Link to the file that ShareX needs, won't return any objects or something else.
+ * @returns {Promise<string>} Link to the file that ShareX needs, won't return any objects or something else.
  */
 export default defineEventHandler<CreateFileResponse>(async (event) => {
   const url = getRequestURL(event);

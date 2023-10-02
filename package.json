@@ -9,18 +9,15 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare && prisma generate",
-    "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "typecheck": "tsc --noEmit"
   },
   "prisma": {
     "schema": "src/database/schema.prisma"
   },
   "devDependencies": {
-    "@nuxt/test-utils": "^3.5.3",
-    "@types/busboy": "^1.5.0",
-    "@types/node": "^18",
-    "jest": "^29.5.0",
-    "nuxt": "^3.6.1",
+    "@types/busboy": "^1.5.1",
+    "@types/node": "^18.17.17",
+    "nuxt": "^3.7.4",
     "nuxt-security": "^0.13.1",
     "prisma": "^4.16.2",
     "stylus": "^0.59.0"
@@ -28,14 +25,14 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.58.0",
     "@aws-sdk/signature-v4-crt": "3.58.0",
-    "@fontsource-variable/manrope": "^5.0.3",
+    "@fontsource-variable/manrope": "^5.0.13",
     "@lucia-auth/adapter-prisma": "^2.0.0",
     "@prisma/client": "4.16.2",
     "busboy": "^1.6.0",
-    "chart.js": "^4.3.0",
-    "lucia-auth": "^1.7.0",
-    "slova": "^2.2.2",
+    "chart.js": "^4.4.0",
+    "lucia-auth": "^1.8.0",
+    "slova": "^2.2.8",
     "vue-chartjs": "^5.2.0",
-    "vue-remix-icons": "^3.2.0"
+    "vue-remix-icons": "^3.5.0"
   }
 }

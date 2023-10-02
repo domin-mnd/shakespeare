@@ -12,7 +12,7 @@ import { prisma } from "@/server/libs/database";
  *
  * @returns {string} Status & the SDK response in body key.
  */
-export default defineEventHandler<DeleteFileResponse>(async (event) => {
+export default defineEventHandler<DeleteFileRequest, Promise<DeleteFileResponse>>(async (event) => {
   const body = await readBody(event);
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");

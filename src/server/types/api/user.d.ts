@@ -1,8 +1,17 @@
 /**
+ * ### POST `/api/login` request
+ */
+interface LoginUserRequest extends DefaultResponse {
+  body: {
+    /** Permanent username for the user. */
+    username?: string;
+    /** User password. */
+    password?: string;
+  }
+}
+
+/**
  * ### POST `/api/login` success response
- * 
- * @prop {string} username - Permanent username for the user
- * @prop {string} password - User password
  */
 interface LoginUserResponse extends DefaultResponse {
   /** Logged in user response */
@@ -15,7 +24,12 @@ interface LoginUserResponse extends DefaultResponse {
 }
 
 /**
- * ### GET `/api/user` success response
+ * ### GET `/api/profile` request
+ */
+interface GetProfileRequest {}
+
+/**
+ * ### GET `/api/profile` success response
  *
  * @see {@link https://lucia-auth.com/basics/handle-requests?nuxt Handle Requests}
  */
@@ -35,11 +49,21 @@ interface GetProfileResponse extends DefaultResponse {
 }
 
 /**
- * ### GET `/api/users` success response
+ * ### GET `/api/users` request
  *
  * @header Authorization
- * @param {string} username - User username (not nickname)
- * @param {string} quantity - Amount of uploads to return from that user, defaults to 15
+ */
+interface GetUserRequest {
+  query: {
+    /** User username (not nickname). */
+    username?: username;
+    /** Amount of uploads to return from that user, defaults to 15 */
+    quantity?: quantity;
+  }
+}
+
+/**
+ * ### GET `/api/users` success response
  */
 interface GetUserResponse {
   /** User ID */
@@ -53,14 +77,27 @@ interface GetUserResponse {
 }
 
 /**
- * ### POST `/api/user` success response
+ * ### POST `/api/user` request
  *
  * @header Authorization
- * @prop {string} username - Permanent username for the user
- * @prop {string} password - User password
- * @prop {string?} nickname - Nickname to assign
- * @prop {string?} avatar_url - Avatar URL to assign
- * @prop {Role?} role - Role to assign - either "ADMIN" or "USER"
+ */
+interface CreateUserRequest {
+  body: {
+    /** Permanent username for the user. */
+    username?: string;
+    /** User password. */
+    password?: string;
+    /** Nickname to assign. */
+    nickname?: string;
+    /** Avatar URL to assign. */
+    avatar_url?: string;
+    /** Role to assign - either "ADMIN" or "USER". */
+    role?: "ADMIN" | "USER";
+  };
+}
+
+/**
+ * ### POST `/api/user` success response
  */
 interface CreateUserResponse extends DefaultResponse {
   /** New user response */
@@ -75,13 +112,25 @@ interface CreateUserResponse extends DefaultResponse {
 }
 
 /**
- * ### PUT `/api/user` success response
+ * ### PUT `/api/user` request
  *
  * @header Authorization
- * @prop {string} userId - User's ID to delete
- * @prop {string?} nickname - Nickname to change
- * @prop {string?} avatar_url - Avatar URL to change
- * @prop {Role?} role - Role to change - either "ADMIN" or "USER"
+ */
+interface UpdateUserRequest {
+  body: {
+    /** User's ID to delete. */
+    userId?: string;
+    /** Nickname to change. */
+    nickname?: string;
+    /** Avatar URL to change. */
+    avatar_url?: string;
+    /** Role to change - either "ADMIN" or "USER". */
+    role?: "ADMIN" | "USER";
+  }
+}
+
+/**
+ * ### PUT `/api/user` success response
  */
 interface UpdateUserResponse extends DefaultResponse {
   /** Lucia session for the user */
@@ -89,9 +138,18 @@ interface UpdateUserResponse extends DefaultResponse {
 }
 
 /**
- * ### DELETE `/api/user` success response
+ * ### DELETE `/api/user` request
  *
  * @header Authorization
- * @prop {string} userId - User's ID to delete
+ */
+interface DeleteUserRequest {
+  body: {
+    /** User's ID to delete. */
+    userId?: string;
+  }
+}
+
+/**
+ * ### DELETE `/api/user` success response
  */
 interface DeleteUserResponse extends DefaultResponse {}

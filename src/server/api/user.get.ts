@@ -6,10 +6,8 @@ import { prisma } from "@/server/libs/database";
  * Validates the caller user, then returns
  * the user found by the username body parameter
  */
-export default defineEventHandler<GetUserResponse>(async (event) => {
-  const url = getRequestURL(event);
-  // Username
-  const username = url.searchParams.get("username");
+export default defineEventHandler<GetUserRequest, Promise<GetUserResponse>>(async (event) => {
+  const { username } = getQuery(event);
   const apikey = getRequestHeader(event, "authorization");
 
   if (!apikey)

@@ -11,7 +11,7 @@ import { prisma } from "@/server/libs/database";
  * - Update the record attributes in database via lucia-auth & invalidate sessions
  * - Handle conflict error
  */
-export default defineEventHandler<UpdateUserResponse>(async (event) => {
+export default defineEventHandler<UpdateUserRequest, Promise<UpdateUserResponse>>(async (event) => {
   const body = await readBody(event);
   const apikey = getRequestHeader(event, "authorization");
 

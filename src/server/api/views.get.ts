@@ -6,14 +6,8 @@ import { prisma } from "@/server/libs/database";
  * Endpoint processes upload record
  * & returns expanded mapped ref object
  */
-export default defineEventHandler<GetViewsResponse>(async (event) => {
-  const url = getRequestURL(event);
-  // Ranges, convert nullish to undefined
-  const lte = url.searchParams.get("lte") ?? undefined; // Less than or equal to
-  const gte = url.searchParams.get("gte") ?? undefined; // Greater than or equal to
-  const lt = url.searchParams.get("lt") ?? undefined; // Less than or equal
-  const gt = url.searchParams.get("gt") ?? undefined; // Greater than or equal
-  const username = url.searchParams.get("username");
+export default defineEventHandler<GetViewsRequest, Promise<GetViewsResponse>>(async (event) => {
+  const { lte, gte, lt, gt, username } = getQuery(event);
 
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");

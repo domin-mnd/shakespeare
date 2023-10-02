@@ -9,7 +9,7 @@ import { prisma } from "@/server/libs/database";
  *
  * @see {@link https://github.com/pilcrowOnPaper/lucia/blob/main/examples/nuxt/server/api/user.get.ts Example}
  */
-export default defineEventHandler<GetProfileResponse>(async (event) => {
+export default defineEventHandler<GetProfileRequest, Promise<GetProfileResponse>>(async (event) => {
   const authRequest = auth.handleRequest(event);
   const { user } = await authRequest.validateUser();
 

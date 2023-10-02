@@ -6,7 +6,7 @@ import { prisma } from "@/server/libs/database";
  *
  * Endpoint validates username and password and creates a session.
  */
-export default defineEventHandler<LoginUserResponse>(async (event) => {
+export default defineEventHandler<LoginUserRequest, Promise<LoginUserResponse>>(async (event) => {
   // Required keys
   const { username, password } = await readBody(event);
 

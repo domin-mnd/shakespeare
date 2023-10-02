@@ -1,7 +1,15 @@
 /**
+ * ### GET `/api/files` request
+ */
+interface GetFileRequest {
+  query: {
+    /** Entire filename to fetch for. */
+    filename?: string;
+  }
+}
+
+/**
  * ### GET `/api/files` success response
- * 
- * @param {string} filename - Entire filename to fetch for
  */
 type GetFileResponse = Omit<import("@prisma/client").Upload, "authorId" | "path"> & {
   /** Elevated counted views for the upload */
@@ -13,18 +21,37 @@ type GetFileResponse = Omit<import("@prisma/client").Upload, "authorId" | "path"
 }
 
 /**
- * ### POST `/api/files` success response
+ * ### POST `/api/files` request
  * 
  * @header Authorization
  * @header Content-Type
  */
-type CreateFileResponse = Promise<string>;
+interface CreateFileRequest {
+  query: {
+    type?: "classic" | "numbers" | "pronounceable";
+    length?: number;
+  }
+};
+
+/**
+ * ### POST `/api/files` success response
+ */
+type CreateFileResponse = string;
+
+/**
+ * ### DELETE `/api/files` request
+ * 
+ * @header Authorization
+ */
+interface DeleteFileRequest {
+  body: {
+    /** Slug filename to delete (not filename itself e.g. "fQwE.png"). */
+    filename?: string;
+  };
+}
 
 /**
  * ### DELETE `/api/files` success response
- * 
- * @header Authorization
- * @prop {string} filename - Slug filename to delete (not filename itself e.g. "fQwE.png")
  */
 interface DeleteFileResponse extends DefaultResponse {
   /** Metadata response from S3 */

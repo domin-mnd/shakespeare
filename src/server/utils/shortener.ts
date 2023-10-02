@@ -22,11 +22,11 @@ function shuffler(string: string, length: number): string {
 /**
  * Returns a shortened string based on the given type and length.
  *
- * @param {ShorteningType | string} type - The type of shortening to use.
+ * @param {ShorteningType} type - The type of shortening to use.
  * @param {number} [length=4] - The desired length of the shortened string.
  * @return {string} The shortened string.
  */
-export function shortener(type: ShorteningType | string, length: number = 4): string {
+export function shortener(type: ShorteningType, length: number = 4): string {
   switch (type) {
     case ShorteningType.Classic:
       return shuffler(classic, length);

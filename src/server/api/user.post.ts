@@ -11,8 +11,8 @@ import { prisma } from "@/server/libs/database";
  * - Create the record in database via lucia-auth
  * - Handle conflict error
  */
-export default defineEventHandler<CreateUserResponse>(async (event) => {
-  const body = await readBody(event);
+export default defineEventHandler<CreateUserRequest, Promise<CreateUserResponse>>(async (event) => {
+  const { username, password, role, nickname, avatar_url } = await readBody(event);
 
   const usersExist = await prisma.authUser
     .findMany({
@@ -46,25 +46,18 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
       });
   }
 
-  // Required keys
-  const username = body.username;
-  const password = body.password;
-
-  const nickname = typeof body.nickname;
-  const avatar_url = typeof body.avatar_url;
-
-  // Accepts only enum values
-  const role = body.role;
+  const nicknameType = typeof nickname;
+  const avatarUrlType = typeof avatar_url;
 
   // Validation
-  if (nickname !== "string" && nickname !== "undefined")
+  if (nicknameType !== "string" && nicknameType !== "undefined")
     throw createError({
       statusCode: 400,
       statusMessage: "Bad Request",
       message: "nickname isn't type of string.",
     });
 
-  if (avatar_url !== "string" && avatar_url !== "undefined")
+  if (avatarUrlType !== "string" && avatarUrlType !== "undefined")
     throw createError({
       statusCode: 400,
       statusMessage: "Bad Request",
@@ -124,9 +117,9 @@ export default defineEventHandler<CreateUserResponse>(async (event) => {
       },
       attributes: {
         // Additional parameter fields
-        nickname: body.nickname,
-        avatar_url: body.avatar_url,
-        role: body.role,
+        nickname,
+        avatar_url,
+        role: role as "ADMIN" | "USER",
       },
     });
 

@@ -16,10 +16,11 @@ import { ShorteningType } from "@/server/libs/constants";
  *
  * @returns {Promise<string>} Link to the file that ShareX needs, won't return any objects or something else.
  */
-export default defineEventHandler<CreateFileResponse>(async (event) => {
-  const url = getRequestURL(event);
-  const shortenerTypeConfig = url.searchParams.get("type");
-  const shortenerLengthConfig = url.searchParams.get("length");
+export default defineEventHandler<
+  CreateFileRequest,
+  Promise<CreateFileResponse>
+>(async (event) => {
+  const { type, length } = getQuery(event);
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");
   const contentType = getRequestHeader(event, "content-type");
@@ -51,23 +52,19 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
     });
 
   // Enum type of shortening
-  let shorteningType: ShorteningType | string =
-    shortenerTypeConfig ?? ShorteningType.Classic;
+  let shorteningType: ShorteningType = ShorteningType.Classic;
 
-  // Await the body after the user is validated
-  switch (shortenerTypeConfig) {
-    case "classic":
-      shorteningType = ShorteningType.Classic;
-      break;
-    case "numbers":
-      shorteningType = ShorteningType.Numbers;
-      break;
-    case "pronounceable":
-      shorteningType = ShorteningType.Pronounceable;
-  }
+  const types = {
+    classic: ShorteningType.Classic,
+    numbers: ShorteningType.Numbers,
+    pronounceable: ShorteningType.Pronounceable,
+  };
 
   // Define custom filename with custom settings
-  const filename = shortener(shorteningType, +(shortenerLengthConfig ?? 4));
+  const filename = shortener(
+    (type && types[type]) ?? shorteningType,
+    +(length ?? 4)
+  );
 
   if (!filename)
     throw createError({
@@ -94,7 +91,8 @@ export default defineEventHandler<CreateFileResponse>(async (event) => {
       throw createError({
         statusCode: 500,
         statusMessage: "Internal Server Error",
-        message: "An unknown error has occured. Please consider checking console output for more information."
+        message:
+          "An unknown error has occured. Please consider checking console output for more information.",
       });
     }
   }

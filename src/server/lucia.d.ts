@@ -6,6 +6,6 @@ declare namespace Lucia {
   type UserAttributes = {
     nickname?: string;
     avatar_url?: string;
-    role: import("@prisma/client").Role;
+    role: "ADMIN" | "USER";
   };
 }

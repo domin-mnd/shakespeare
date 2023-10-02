@@ -10,7 +10,10 @@ import { prisma } from "@/server/libs/database";
  * - Delete the record in database via lucia-auth
  * - Handle conflict error
  */
-export default defineEventHandler<DeleteUserResponse>(async (event) => {
+export default defineEventHandler<
+  DeleteUserRequest,
+  Promise<DeleteUserResponse>
+>(async (event) => {
   const body = await readBody(event);
   const apikey = getRequestHeader(event, "authorization");
 
@@ -20,7 +23,7 @@ export default defineEventHandler<DeleteUserResponse>(async (event) => {
       statusMessage: "Unauthorized",
       message: "Missing required header - authorization.",
     });
-  
+
   // Required keys
   const userId = body.userId;
 
@@ -29,14 +32,14 @@ export default defineEventHandler<DeleteUserResponse>(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage: "Bad Request",
-      message: "Missing required key - userId."
+      message: "Missing required key - userId.",
     });
 
   if (typeof userId !== "string")
     throw createError({
       statusCode: 400,
       statusMessage: "Bad Request",
-      message: "userId must be a string."
+      message: "userId must be a string.",
     });
 
   const user = await prisma.authUser.findUnique({
@@ -68,7 +71,8 @@ export default defineEventHandler<DeleteUserResponse>(async (event) => {
       throw createError({
         statusCode: 500,
         statusMessage: "Internal Server Error",
-        message: "An unknown error has occured. Please consider checking console output for more information."
+        message:
+          "An unknown error has occured. Please consider checking console output for more information.",
       });
     }
   }

@@ -7,9 +7,8 @@ import { prisma } from "@/server/libs/database";
  * asynchronously updates the view count
  * & returns expanded ref object
  */
-export default defineEventHandler<GetFileResponse>(async (event) => {
-  const url = getRequestURL(event);
-  const filename = url.searchParams.get("filename");
+export default defineEventHandler<GetFileRequest, Promise<GetFileResponse>>(async (event) => {
+  const { filename } = getQuery(event);
 
   if (!filename)
     throw createError({

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import RiPencilFill from 'vue-remix-icons/ri-pencil-fill.vue';
+import { PhPencilSimple } from '@phosphor-icons/vue';
 
 const {
   avatarUrl,
@@ -26,7 +26,7 @@ const {
         <span v-if="nickname" id="username">{{ username }}</span>
       </div>
       <NuxtLink v-if="withEditButton" to="/settings/profile" id="edit-button">
-        <RiPencilFill width="20" height="20" />
+        <PhPencilSimple :size="20" weight="fill" />
       </NuxtLink>
     </div>
   </header>
@@ -59,14 +59,14 @@ const {
     right - ss-lg-20
     transform translateX(100%)
 
-    transition fill .3s ease
-    fill cs-dimmed
+    transition color .3s ease
+    color cs-dimmed
     cursor pointer
     height 20px
 
     &:hover
-      transition fill .3s ease
-      fill cs-primary
+      transition color .3s ease
+      color cs-primary
 
 #content
   display flex

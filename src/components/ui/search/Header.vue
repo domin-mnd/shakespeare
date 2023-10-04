@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import RiFilter2Fill from "vue-remix-icons/ri-filter-2-fill.vue";
+import { PhFunnel } from "@phosphor-icons/vue";
 
 const filterModalOpened = ref<boolean>(false);
 
@@ -27,7 +27,7 @@ defineExpose({ inputValue });
       variant="secondary"
       @click="filterModalOpened = !filterModalOpened"
     >
-      <RiFilter2Fill width="20" height="20" />
+      <PhFunnel :size="20" weight="fill" />
     </UiButton>
     <UiSearchFilter
       class="dropdown"

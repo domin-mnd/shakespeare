@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import RiCloseFill from 'vue-remix-icons/ri-close-fill.vue';
+import { PhX } from "@phosphor-icons/vue";
 
 const {
   title,
@@ -13,7 +13,7 @@ const {
   <div class="box">
     <div v-if="title || !withoutCloseButton" class="header">
       <span class="title">{{ title ?? "" }}</span>
-      <RiCloseFill v-if="!withoutCloseButton" width="24" height="24" class="close" @click="$emit('close')" />
+      <PhX v-if="!withoutCloseButton" :size="18" class="close" @click="$emit('close')" />
       <div v-else />
     </div>
     <div class="content">
@@ -48,13 +48,13 @@ const {
     color cs-primary
 
   .close
-    transition fill .3s ease
+    transition color .3s ease
     cursor pointer
-    fill cs-dimmed
+    color cs-dimmed
 
     &:hover
-      transition fill .3s ease
-      fill cs-primary
+      transition color .3s ease
+      color cs-primary
 
 .content
   padding ss-sm-10

@@ -35,9 +35,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  build: {
-    transpile: ["vue-remix-icons"],
-  },
   vite: {
     css: {
       preprocessorOptions: {

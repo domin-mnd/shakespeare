@@ -3,12 +3,12 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "start": "nuxt start",
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare && prisma generate",
+    "start": "nuxi start",
+    "build": "nuxi build",
+    "dev": "nuxi dev",
+    "generate": "nuxi generate",
+    "preview": "nuxi preview",
+    "postinstall": "nuxi prepare && prisma generate",
     "typecheck": "tsc --noEmit"
   },
   "prisma": {
@@ -27,12 +27,12 @@
     "@aws-sdk/signature-v4-crt": "3.58.0",
     "@fontsource-variable/manrope": "^5.0.13",
     "@lucia-auth/adapter-prisma": "^2.0.0",
+    "@phosphor-icons/vue": "^2.1.6",
     "@prisma/client": "4.16.2",
     "busboy": "^1.6.0",
     "chart.js": "^4.4.0",
     "lucia-auth": "^1.8.0",
     "slova": "^2.2.8",
-    "vue-chartjs": "^5.2.0",
-    "vue-remix-icons": "^3.5.0"
+    "vue-chartjs": "^5.2.0"
   }
 }

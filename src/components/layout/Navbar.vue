@@ -1,9 +1,6 @@
 <script lang="ts" setup>
-import RiHomeFill from "vue-remix-icons/ri-home-fill.vue";
-import RiFolderUploadFill from "vue-remix-icons/ri-folder-upload-fill.vue";
-import RiSearchFill from "vue-remix-icons/ri-search-fill.vue";
-import RiSettingsFill from "vue-remix-icons/ri-settings-fill.vue";
 import Avatar from "@/components/ui/Avatar.vue";
+import { PhHouse, PhPaperPlaneTilt, PhMagnifyingGlass, PhNut } from "@phosphor-icons/vue";
 
 const store = useUser();
 
@@ -11,22 +8,22 @@ const links = [
   {
     label: "Home",
     to: "/",
-    icon: RiHomeFill,
+    icon: PhHouse,
   },
   {
     label: "Upload",
     to: "/upload",
-    icon: RiFolderUploadFill,
+    icon: PhPaperPlaneTilt,
   },
   {
     label: "Search",
     to: "/search",
-    icon: RiSearchFill,
+    icon: PhMagnifyingGlass,
   },
   {
     label: "Settings",
     to: "/settings",
-    icon: RiSettingsFill,
+    icon: PhNut,
   },
   {
     label: "Profile",
@@ -34,7 +31,6 @@ const links = [
     icon: Avatar,
     params: {
       src: store.value.avatar_url,
-      size: 32,
       nickname: store.value.nickname || store.value.username,
     },
   },
@@ -47,9 +43,9 @@ const links = [
         <UiTooltip :label="link.label" position="left">
           <component
             :is="link.icon"
-            width="32"
-            height="32"
+            :size="28"
             class="icon"
+            weight="fill"
             v-bind="link.params"
           />
         </UiTooltip>
@@ -64,7 +60,7 @@ const links = [
   display flex
   flex-direction column
 
-  gap ss-xl-36
+  gap ss-xl-35
 
   padding-left ss-xl-24
   padding-right ss-xl-24
@@ -80,13 +76,16 @@ const links = [
     padding-bottom ss-md-16
 
     border-top 1px solid cs-outline
-    background-color cs-background
+    background-color rgba(cs-background, .8)
     z-index 10
     justify-content center
     flex-direction row
 
     width 100vw
   
+  @media screen and (max-width 950px)
+    backdrop-filter blur(10px)
+
   @media screen and (max-width 600px)
     justify-content space-around
 
@@ -94,11 +93,11 @@ const links = [
     justify-content start
 
 .link
-  fill cs-dimmed
+  color cs-dimmed
   text-decoration none
 
   &.router-link-exact-active
-    fill cs-primary
+    color cs-primary
 
   .icon
     transition opacity 0.1s

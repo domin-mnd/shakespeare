@@ -2,21 +2,13 @@
 const {
   username,
   quantity = 10,
-  page = ref<number>(1),
-  fetcher,
+  page: rawPage = 1,
+  filename: rawFilename = () => "",
 } = defineProps<{
   username?: string;
   quantity?: number;
-  page?: Ref<number>;
-  fetcher?: ({
-    quantity,
-    page,
-    username,
-  }: {
-    quantity: number;
-    page: Ref<number>;
-    username?: string;
-  }) => any;
+  page?: number;
+  filename?: () => string;
 }>();
 
 const cookie = useCookie("api_key");
@@ -25,23 +17,24 @@ if (!cookie.value) {
   await navigateTo("/login");
 }
 
-const { data, pending, error, refresh, execute, status } = await (
-  fetcher?.({
-    quantity,
-    page,
-    username,
-  }) ??
-    useLazyFetch("/api/search", {
-      headers: {
-        Authorization: cookie.value as string,
-      },
-      params: {
-        quantity,
-        page,
-        username,
-      },
-      server: false,
-    })
+const filename = computed<string>(() => rawFilename());
+let pageValue = rawPage;
+const page = computed<number>(() => pageValue);
+
+const { data, pending, error, refresh, execute, status } = await useFetch(
+  "/api/search",
+  {
+    headers: {
+      Authorization: cookie.value as string,
+    },
+    params: {
+      quantity,
+      page,
+      username,
+      filename,
+    },
+    server: false,
+  }
 );
 
 if (error.value) throw createError(error.value);
@@ -52,11 +45,11 @@ let initiallyLoaded = false;
 // Via state
 let loadMore: boolean = false;
 
-let posts = ref(data.value);
+let posts = ref(data.value ?? []);
 
 watch(data, () => {
   if (!initiallyLoaded) {
-    posts.value = data.value;
+    posts.value = data.value ?? [];
     initiallyLoaded = true;
   }
 });
@@ -70,12 +63,22 @@ async function onScroll(event: Event) {
     !loadMore
   ) {
     loadMore = true;
-    page.value++;
+    pageValue++;
     await refresh();
     loadMore = false;
+    if (!data.value?.length) return;
     posts.value.push(...data.value);
     // posts.value = [...(posts.value ?? []), ...()];
   }
+}
+
+async function reset() {
+  loadMore = true;
+  posts.value = [];
+  pageValue = 0;
+  await refresh();
+  posts.value = data.value ?? [];
+  loadMore = false;
 }
 
 onMounted(() => {
@@ -90,6 +93,11 @@ watch(pending, () => {
     // Remove infinite scroll functionality if there are no more posts
     layout?.removeEventListener("scroll", onScroll);
   }
+});
+
+watch(filename, () => {
+  console.log(filename);
+  reset();
 });
 
 defineExpose({ data, pending, error, refresh, execute });

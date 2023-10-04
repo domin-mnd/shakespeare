@@ -12,15 +12,16 @@ function onInputChange(event: Event) {
   inputValue.value = input.value;
 }
 
-onMounted(() => {
-  inputElement.value?.input?.addEventListener("input", onInputChange);
-});
-
 defineExpose({ inputValue });
 </script>
 <template>
   <div class="header">
-    <UiInput placeholder="Input search..." class="searchbar" ref="inputElement" />
+    <UiInput
+      placeholder="Input search..."
+      class="searchbar"
+      ref="inputElement"
+      @input="onInputChange"
+    />
     <UiButton
       class="filter"
       variant="secondary"
@@ -56,7 +57,7 @@ defineExpose({ inputValue });
   .filter
     // Setting font size to 16 would lead to empty space in button
     font-size 0
-  
+
   .dropdown
     position absolute
     bottom - ss-xl-25

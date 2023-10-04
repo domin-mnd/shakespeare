@@ -6,35 +6,13 @@ if (!cookie.value) {
 }
 
 const input = ref<{ inputValue: string } | null>(null);
-const value = computed(() => input.value?.inputValue);
+const computeInput = () => input.value?.inputValue ?? "";
 
-const fetcher = async ({
-  quantity,
-  page,
-  username,
-}: {
-  quantity: number;
-  page: Ref<number>;
-  username?: string;
-}) =>
-  await useFetch("/api/search", {
-    headers: {
-      Authorization: cookie.value as string,
-    },
-    params: {
-      quantity,
-      page,
-      username,
-    },
-    server: false,
-    immediate: false,
-    watch: [value],
-  });
 </script>
 <template>
   <div>
     <UiSearchHeader ref="input" />
-    <UiUploads :fetcher="fetcher">
+    <UiUploads :filename="computeInput">
       <template v-slot:idle>
         <span class="center">
           Type your search query to find something 👏

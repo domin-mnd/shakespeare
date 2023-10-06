@@ -78,13 +78,6 @@ export async function streamFilesToSimpleStorage(
     },
   });
 
-  console.time("upload");
-  await uploadResponse;
-  console.timeEnd("upload");
-  console.time("database");
-  await databaseResponse;
-  console.timeEnd("database");
-
   return Promise.all([uploadResponse, databaseResponse]);
 }
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PhPencilSimple } from '@phosphor-icons/vue';
+import { PhPencilSimple } from '@phosphor-icons/vue/compact';
 
 const {
   avatarUrl,

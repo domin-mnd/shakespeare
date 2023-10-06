@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PhX } from "@phosphor-icons/vue";
+import { PhX } from "@phosphor-icons/vue/compact";
 
 const {
   title,

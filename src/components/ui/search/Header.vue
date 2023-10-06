@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PhFunnel } from "@phosphor-icons/vue";
+import { PhFunnel } from "@phosphor-icons/vue/compact";
 
 const filterModalOpened = ref<boolean>(false);
 

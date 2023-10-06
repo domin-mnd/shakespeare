@@ -15,7 +15,6 @@
     "schema": "src/database/schema.prisma"
   },
   "devDependencies": {
-    "@types/busboy": "^1.5.1",
     "@types/node": "^18.17.17",
     "nuxt": "^3.7.4",
     "nuxt-security": "^0.13.1",
@@ -23,16 +22,14 @@
     "stylus": "^0.59.0"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.58.0",
-    "@aws-sdk/signature-v4-crt": "3.58.0",
     "@fontsource-variable/manrope": "^5.0.13",
     "@lucia-auth/adapter-prisma": "^2.0.0",
     "@phosphor-icons/vue": "^2.1.6",
     "@prisma/client": "4.16.2",
-    "busboy": "^1.6.0",
     "chart.js": "^4.4.0",
     "lucia-auth": "^1.8.0",
-    "slova": "^2.2.8",
+    "minio": "^7.1.3",
+    "slova": "^2.2.9",
     "vue-chartjs": "^5.2.0"
   }
 }

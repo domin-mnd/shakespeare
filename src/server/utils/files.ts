@@ -1,12 +1,6 @@
 import { prisma } from "@/server/libs/database";
+import { Client } from "minio";
 import type { H3Event } from "h3";
-import Busboy from "busboy";
-import {
-  DeleteObjectCommand,
-  DeleteObjectCommandOutput,
-  PutObjectCommand,
-  S3Client,
-} from "@aws-sdk/client-s3";
 
 // Handle environment variables
 // Deconstructing environment variables is not necessary
@@ -19,82 +13,89 @@ if (
   throw "Missing environment variables";
 }
 
-const client = new S3Client({
-  endpoint: `https://${process.env.S3_ENDPOINT}`,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY_ID,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-  },
+const client = new Client({
+  endPoint: process.env.S3_ENDPOINT,
+  useSSL: true,
+  accessKey: process.env.S3_ACCESS_KEY_ID,
+  secretKey: process.env.S3_SECRET_ACCESS_KEY,
   region: process.env.S3_REGION,
 });
 
 export async function streamFilesToSimpleStorage(
   event: H3Event,
-  filename: string,
+  slug: string,
   userId: string
-): Promise<void> {
-  // Await for all chunks & promises to be resolved
-  return await new Promise((resolve, reject) => {
-    const bb = Busboy({ headers: event.node.req.headers });
-    let chunks: any[] = [];
-    let fileMimeType: string;
-    let fileExtension: string | undefined;
+): Promise<any> {
+  const form = await readMultipartFormData(event);
 
-    bb.on(
-      "file",
-      (_fieldname: string, file: File, filedata: FileData): void => {
-        fileMimeType = filedata.mimeType;
-        fileExtension = getExtension(filedata.filename);
-
-        file.on("data", (data) => {
-          // you will get chunks here will pull all chunk to an array and later concat it.
-          chunks.push(data);
-        });
-      }
-    );
-
-    bb.on("finish", async () => {
-      const slug = `${filename}.${fileExtension}`;
-
-      const command = new PutObjectCommand({
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: slug,
-        Body: Buffer.concat(chunks), // Concatenating all chunks
-        ACL: "public-read",
-        ContentType: fileMimeType,
-      });
-
-      Promise.all([
-        client.send(command),
-        prisma.upload.create({
-          data: {
-            filename,
-            mimetype: fileMimeType,
-            extension: fileExtension ?? "",
-            path: `${getSimpleStorageURL()}/${slug}`,
-            authorId: userId,
-            type: "FILE",
-          },
-        }),
-      ])
-        .then(() => resolve())
-        .catch(reject);
+  if (!form) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Bad Request",
+      message: "No form data found.",
     });
+  }
 
-    event.node.req.pipe(bb);
+  const { filename, type, data } = form[0];
+
+  if (!filename) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Bad Request",
+      message: "No file name found.",
+    });
+  }
+
+  if (!type) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Bad Request",
+      message: "No file type found.",
+    });
+  }
+
+  const extension = getExtension(filename);
+
+  const newFilename = `${slug}.${extension}`;
+
+  const uploadResponse = client.putObject(
+    process.env.S3_BUCKET_NAME as string,
+    newFilename,
+    data,
+    {
+      "Content-Type": type,
+    }
+  );
+
+  const databaseResponse = prisma.upload.create({
+    data: {
+      filename: slug,
+      mimetype: type,
+      extension,
+      path: `${getSimpleStorageURL()}/${newFilename}`,
+      authorId: userId,
+      type: "FILE",
+    },
   });
+
+  console.time("upload");
+  await uploadResponse;
+  console.timeEnd("upload");
+  console.time("database");
+  await databaseResponse;
+  console.timeEnd("database");
+
+  return Promise.all([uploadResponse, databaseResponse]);
 }
 
 export const deleteFileFromSimpleStorage = async (
   filename: string
-): Promise<import("@aws-sdk/client-s3").DeleteObjectCommandOutput | null> => {
-  const command = new DeleteObjectCommand({
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: filename, // slug aka [name].[extension]
-  });
-
+): Promise<void | null> => {
   try {
-    const response: DeleteObjectCommandOutput = await client.send(command);
+    const response = await client.removeObject(
+      process.env.S3_BUCKET_NAME as string,
+      filename
+    );
     return response;
   } catch (error) {
     console.error(error);

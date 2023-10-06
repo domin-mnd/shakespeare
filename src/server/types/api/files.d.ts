@@ -55,5 +55,5 @@ interface DeleteFileRequest {
  */
 interface DeleteFileResponse extends DefaultResponse {
   /** Metadata response from S3 */
-  body: import("@aws-sdk/client-s3").DeleteObjectCommandOutput;
+  body: void;
 }

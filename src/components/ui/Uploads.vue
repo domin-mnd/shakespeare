@@ -18,8 +18,7 @@ if (!cookie.value) {
 }
 
 const filename = computed<string>(() => rawFilename());
-let pageValue = rawPage;
-const page = computed<number>(() => pageValue);
+const page = ref(rawPage);
 
 const { data, pending, error, refresh, execute, status } = await useFetch(
   "/api/search",
@@ -63,7 +62,7 @@ async function onScroll(event: Event) {
     !loadMore
   ) {
     loadMore = true;
-    pageValue++;
+    page.value++;
     await refresh();
     loadMore = false;
     if (!data.value?.length) return;
@@ -75,7 +74,7 @@ async function onScroll(event: Event) {
 async function reset() {
   loadMore = true;
   posts.value = [];
-  pageValue = 0;
+  page.value = 1;
   await refresh();
   posts.value = data.value ?? [];
   loadMore = false;
@@ -96,7 +95,6 @@ watch(pending, () => {
 });
 
 watch(filename, () => {
-  console.log(filename);
   reset();
 });
 

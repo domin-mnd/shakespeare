@@ -1,12 +1,7 @@
 <script lang="ts" setup>
-import { PhPencilSimple } from '@phosphor-icons/vue/compact';
+import { PhPencilSimple } from "@phosphor-icons/vue/compact";
 
-const {
-  avatarUrl,
-  username,
-  nickname,
-  withEditButton
-} = defineProps<{
+const { avatarUrl, username, nickname, withEditButton } = defineProps<{
   avatarUrl?: string | null;
   username: string;
   nickname?: string | null;
@@ -15,11 +10,7 @@ const {
 </script>
 <template>
   <header id="header">
-    <UiAvatar
-      :src="avatarUrl"
-      :nickname="nickname || username"
-      :size="150"
-    />
+    <UiAvatar :src="avatarUrl" :nickname="nickname || username" :size="150" />
     <div id="info">
       <div id="content">
         <span id="nickname">{{ nickname || username }}</span>
@@ -77,7 +68,7 @@ const {
   #nickname
     font-size fs-lg-20
     color cs-primary
-  
+
   #username
     font-size fs-md-16
     color cs-secondary

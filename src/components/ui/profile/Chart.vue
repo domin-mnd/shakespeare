@@ -13,7 +13,7 @@ ChartJS.register(
   LineElement,
   CategoryScale,
   LinearScale,
-  PointElement
+  PointElement,
 );
 
 const { username } = defineProps<{

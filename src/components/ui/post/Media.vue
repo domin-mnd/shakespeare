@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-const {
-  src
-} = defineProps<{
-  src: string
+const { src } = defineProps<{
+  src: string;
 }>();
 </script>
 <template>

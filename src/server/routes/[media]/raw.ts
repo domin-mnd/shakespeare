@@ -22,7 +22,8 @@ export default defineEventHandler(async (event) => {
 
   setHeaders(event, {
     "Content-Type": url.mimetype,
-    "Cache-Control": "public, max-age=63072000, s-maxage=63072000, stale-while-revalidate=86400",
+    "Cache-Control":
+      "public, max-age=63072000, s-maxage=63072000, stale-while-revalidate=86400",
   });
 
   const { body } = await fetch(url.path);

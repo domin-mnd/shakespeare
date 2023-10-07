@@ -19,7 +19,7 @@ export function getSimpleStorageURL(): string {
       statusCode: 500,
       statusMessage: "Internal Server Error",
       message: "Invalid S3 endpoint. Endpoint shouldn't end with a slash.",
-    }
+    };
 
   return `https://${
     process.env.S3_BUCKET_NAME ? process.env.S3_BUCKET_NAME + "." : ""

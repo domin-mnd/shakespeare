@@ -1,10 +1,7 @@
 <script lang="ts" setup>
 import { PhX } from "@phosphor-icons/vue/compact";
 
-const {
-  title,
-  withoutCloseButton,
-} = defineProps<{
+const { title, withoutCloseButton } = defineProps<{
   title?: string;
   withoutCloseButton?: boolean;
 }>();
@@ -13,7 +10,12 @@ const {
   <div class="box">
     <div v-if="title || !withoutCloseButton" class="header">
       <span class="title">{{ title ?? "" }}</span>
-      <PhX v-if="!withoutCloseButton" :size="18" class="close" @click="$emit('close')" />
+      <PhX
+        v-if="!withoutCloseButton"
+        :size="18"
+        class="close"
+        @click="$emit('close')"
+      />
       <div v-else />
     </div>
     <div class="content">
@@ -59,5 +61,4 @@ const {
 .content
   padding ss-sm-10
   font-size fs-md-15
-
 </style>

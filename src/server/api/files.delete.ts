@@ -12,7 +12,10 @@ import { prisma } from "@/server/libs/database";
  *
  * @returns {string} Status & the SDK response in body key.
  */
-export default defineEventHandler<DeleteFileRequest, Promise<DeleteFileResponse>>(async (event) => {
+export default defineEventHandler<
+  DeleteFileRequest,
+  Promise<DeleteFileResponse>
+>(async (event) => {
   const body = await readBody(event);
   // Checkout cuid API key, authorization header key for every user
   const apikey = getRequestHeader(event, "authorization");
@@ -73,7 +76,8 @@ export default defineEventHandler<DeleteFileRequest, Promise<DeleteFileResponse>
     throw createError({
       statusCode: 500,
       statusMessage: "Internal Server Error",
-      message: "There was an unknown deletion error, please consider checking your console output.",
+      message:
+        "There was an unknown deletion error, please consider checking your console output.",
     });
 
   try {
@@ -87,7 +91,8 @@ export default defineEventHandler<DeleteFileRequest, Promise<DeleteFileResponse>
     throw createError({
       statusCode: 500,
       statusMessage: "Internal Server Error",
-      message: "An unknown error has occured. Please consider checking console output for more information.",
+      message:
+        "An unknown error has occured. Please consider checking console output for more information.",
     });
   }
 

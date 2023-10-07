@@ -6,7 +6,7 @@ interface ViewResponse {
 
 /**
  * ### GET `/api/views` request
- * 
+ *
  * @header Authorization
  */
 interface GetViewsRequest {
@@ -21,8 +21,8 @@ interface GetViewsRequest {
     gte?: string;
     /** Specified user to get views from. */
     username?: string;
-  }
-};
+  };
+}
 
 /**
  * ### GET `/api/views` success response

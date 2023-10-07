@@ -16,15 +16,14 @@ const cookie = useCookie("api_key");
       <UiAvatar :src="avatar" :nickname="nickname || username" :size="48" />
       <div class="user">
         <span class="nickname" v-if="!cookie">{{ nickname || username }}</span>
-        <NuxtLink class="nickname link" :to="`/@${username}`" v-else>{{ nickname || username }}</NuxtLink>
+        <NuxtLink class="nickname link" :to="`/@${username}`" v-else>{{
+          nickname || username
+        }}</NuxtLink>
         <span v-if="nickname" class="username">@{{ username }}</span>
       </div>
     </div>
     <UiPostMedia :src="src" />
-    <UiPostInfo
-      :date="date"
-      :views="views"
-    />
+    <UiPostInfo :date="date" :views="views" />
   </div>
 </template>
 <style lang="stylus" scoped>

@@ -33,7 +33,7 @@ const { data, pending, error, refresh, execute, status } = await useFetch(
       filename,
     },
     server: false,
-  }
+  },
 );
 
 if (error.value) throw createError(error.value);

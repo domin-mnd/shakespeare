@@ -63,7 +63,7 @@ export default defineEventHandler<
   // Define custom filename with custom settings
   const filename = shortener(
     (type && types[type]) ?? shorteningType,
-    +(length ?? 4)
+    +(length ?? 4),
   );
 
   if (!filename)

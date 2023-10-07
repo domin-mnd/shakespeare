@@ -17,7 +17,13 @@ onMounted(() => {
 });
 </script>
 <template>
-  <UiModal :title="title" @close="$emit('close')" class="visibility" :class="{ show }" without-close-button>
+  <UiModal
+    :title="title"
+    @close="$emit('close')"
+    class="visibility"
+    :class="{ show }"
+    without-close-button
+  >
     <slot />
   </UiModal>
 </template>

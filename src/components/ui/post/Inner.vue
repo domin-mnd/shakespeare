@@ -18,14 +18,13 @@ const { avatar, nickname, username, date, views, src } = defineProps<{
     </div>
     <div class="content">
       <div class="author">
-        <NuxtLink :to="'/@' + username" class="nickname">{{ nickname || username }}</NuxtLink>
+        <NuxtLink :to="'/@' + username" class="nickname">{{
+          nickname || username
+        }}</NuxtLink>
         <span v-if="nickname" class="username">@{{ username }}</span>
       </div>
       <UiPostMedia :src="src" />
-      <UiPostInfo
-        :date="date"
-        :views="views"
-      />
+      <UiPostInfo :date="date" :views="views" />
     </div>
   </NuxtLink>
 </template>
@@ -58,7 +57,7 @@ const { avatar, nickname, username, date, views, src } = defineProps<{
 
     .user-link
       text-decoration none
-  
+
   .content
     display flex
     flex-direction column
@@ -85,7 +84,7 @@ const { avatar, nickname, username, date, views, src } = defineProps<{
           text-decoration underline
           text-underline-offset 3px
           text-decoration-thickness 1px
-          
+
 
       .username
         font-size fs-md-14

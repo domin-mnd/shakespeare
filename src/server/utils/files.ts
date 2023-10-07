@@ -24,7 +24,7 @@ const client = new Client({
 export async function streamFilesToSimpleStorage(
   event: H3Event,
   slug: string,
-  userId: string
+  userId: string,
 ): Promise<any> {
   const form = await readMultipartFormData(event);
 
@@ -64,7 +64,7 @@ export async function streamFilesToSimpleStorage(
     data,
     {
       "Content-Type": type,
-    }
+    },
   );
 
   const databaseResponse = prisma.upload.create({
@@ -82,12 +82,12 @@ export async function streamFilesToSimpleStorage(
 }
 
 export const deleteFileFromSimpleStorage = async (
-  filename: string
+  filename: string,
 ): Promise<void | null> => {
   try {
     const response = await client.removeObject(
       process.env.S3_BUCKET_NAME as string,
-      filename
+      filename,
     );
     return response;
   } catch (error) {

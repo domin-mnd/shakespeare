@@ -11,8 +11,12 @@ import { prisma } from "@/server/libs/database";
  * - Create the record in database via lucia-auth
  * - Handle conflict error
  */
-export default defineEventHandler<CreateUserRequest, Promise<CreateUserResponse>>(async (event) => {
-  const { username, password, role, nickname, avatar_url } = await readBody(event);
+export default defineEventHandler<
+  CreateUserRequest,
+  Promise<CreateUserResponse>
+>(async (event) => {
+  const { username, password, role, nickname, avatar_url } =
+    await readBody(event);
 
   const usersExist = await prisma.authUser
     .findMany({
@@ -156,7 +160,8 @@ export default defineEventHandler<CreateUserRequest, Promise<CreateUserResponse>
       throw createError({
         statusCode: 500,
         statusMessage: "Internal Server Error",
-        message: "An unknown error has occured. Please consider checking console output for more information.",
+        message:
+          "An unknown error has occured. Please consider checking console output for more information.",
       });
     }
   }

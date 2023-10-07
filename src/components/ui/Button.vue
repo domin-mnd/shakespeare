@@ -4,10 +4,7 @@ const { variant } = defineProps<{
 }>();
 </script>
 <template>
-  <button
-    class="button"
-    :class="variant ?? 'primary'"
-  >
+  <button class="button" :class="variant ?? 'primary'">
     <slot />
   </button>
 </template>
@@ -41,10 +38,10 @@ const { variant } = defineProps<{
 
     &:hover
       background-color cs-primary
-    
+
     &:active
       opacity .5
-  
+
   &.secondary
     background-color transparent
     border 1px solid cs-dimmed

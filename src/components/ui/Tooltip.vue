@@ -11,7 +11,10 @@ const displayArrow = withArrow !== undefined ? 1 : 0;
 </script>
 <template>
   <div class="tooltip-wrapper" :data-position="position ?? 'top'">
-    <div class="tooltip-content" :class="{ hoverable: !dontShowOnHover, active: show }">
+    <div
+      class="tooltip-content"
+      :class="{ hoverable: !dontShowOnHover, active: show }"
+    >
       <div class="tooltip" role="tooltip">{{ label }}</div>
       <div class="arrow"></div>
     </div>

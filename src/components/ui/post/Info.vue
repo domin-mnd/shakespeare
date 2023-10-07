@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-const {
-  date,
-  views
-} = defineProps<{
+const { date, views } = defineProps<{
   date: string;
   views: number;
 }>();
@@ -20,14 +17,15 @@ const year = postDate.getFullYear();
 <template>
   <div class="info">
     <span class="timestamp">
-      {{ new Date().getFullYear() !== year ? year + ", " : undefined }}{{ month }} {{ day }}, {{ hours }}:{{ minutes }}
+      {{ new Date().getFullYear() !== year ? year + ", " : undefined
+      }}{{ month }} {{ day }}, {{ hours }}:{{ minutes }}
     </span>
     <div class="views">
       <span class="count">
         {{ views }}
       </span>
       <span class="label">
-        {{ views === 1 ? 'View' : 'Views' }}
+        {{ views === 1 ? "View" : "Views" }}
       </span>
     </div>
   </div>
@@ -43,7 +41,7 @@ const year = postDate.getFullYear();
   .timestamp
     font-size fs-md-15
     color cs-secondary
-  
+
   .views
     display flex
     gap ss-xs-3
@@ -51,7 +49,7 @@ const year = postDate.getFullYear();
     .count
       font-size fs-md-16
       color cs-primary
-    
+
     .label
       font-size fs-md-16
       color cs-secondary

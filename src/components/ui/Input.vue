@@ -11,7 +11,7 @@ function onFileChange(event: Event) {
   if (!files) return;
 
   const input = document.querySelector(
-    ".file-wrapper .text"
+    ".file-wrapper .text",
   ) as HTMLInputElement;
   if (!input) return;
 
@@ -20,7 +20,7 @@ function onFileChange(event: Event) {
 
 function onInputChange() {
   const files = document.querySelector(
-    ".file.input input[type=file]"
+    ".file.input input[type=file]",
   ) as HTMLInputElement;
   if (!files) return;
 

@@ -22,14 +22,14 @@ if (error.value?.statusCode !== 404) {
 }
 </script>
 <template>
-  <div v-if="(error?.statusCode !== 404)">
+  <div v-if="error?.statusCode !== 404">
     <UiPostOuter
       :avatar="data?.author.avatar_url"
       :nickname="data?.author.nickname"
-      :username="(data?.author.username as string)"
-      :date="(data?.created_at as string)"
+      :username="data?.author.username as string"
+      :date="data?.created_at as string"
       :src="route.fullPath + '/raw'"
-      :views="(data?.views as number)"
+      :views="data?.views as number"
     />
   </div>
   <div id="text-center" v-else>

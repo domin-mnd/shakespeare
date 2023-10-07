@@ -40,7 +40,7 @@ html
 
       &::-webkit-scrollbar
         width 8px
-      
+
       &::-webkit-scrollbar-thumb
         background-color cs-outline
 

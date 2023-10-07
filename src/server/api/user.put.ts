@@ -11,7 +11,10 @@ import { prisma } from "@/server/libs/database";
  * - Update the record attributes in database via lucia-auth & invalidate sessions
  * - Handle conflict error
  */
-export default defineEventHandler<UpdateUserRequest, Promise<UpdateUserResponse>>(async (event) => {
+export default defineEventHandler<
+  UpdateUserRequest,
+  Promise<UpdateUserResponse>
+>(async (event) => {
   const body = await readBody(event);
   const apikey = getRequestHeader(event, "authorization");
 
@@ -96,7 +99,7 @@ export default defineEventHandler<UpdateUserRequest, Promise<UpdateUserResponse>
   try {
     const updatedUser = await auth.updateUserAttributes(
       userId,
-      partialUserAttributes
+      partialUserAttributes,
     );
 
     await auth.invalidateAllUserSessions(updatedUser.userId);
@@ -124,7 +127,8 @@ export default defineEventHandler<UpdateUserRequest, Promise<UpdateUserResponse>
       throw createError({
         statusCode: 500,
         statusMessage: "Internal Server Error",
-        message: "An unknown error has occured. Please consider checking console output for more information.",
+        message:
+          "An unknown error has occured. Please consider checking console output for more information.",
       });
     }
   }

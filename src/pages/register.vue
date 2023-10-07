@@ -116,7 +116,7 @@ async function register(event: Event) {
   if (
     !validatePasswordConfirm(
       data.password as string,
-      data["password-confirm"] as string
+      data["password-confirm"] as string,
     )
   )
     return;
@@ -187,7 +187,7 @@ async function register(event: Event) {
         authorization: successResult.body.apikey,
       },
       body: fileFormData,
-    }
+    },
   );
 
   if (errorFileResponse.value?.statusCode) {
@@ -201,7 +201,8 @@ async function register(event: Event) {
     return navigateTo("/");
   }
 
-  data.avatarUrl = (fileResponse.value as string).split(window.location.host)[1] + "/raw";
+  data.avatarUrl =
+    (fileResponse.value as string).split(window.location.host)[1] + "/raw";
 
   loading.state = "Assigning avatar...";
   const { error: errorUpdateResponse } = await useFetch("/api/user", {

@@ -4,7 +4,5 @@ useHead({
 });
 </script>
 <template>
-  <div>
-    2
-  </div>
+  <div>2</div>
 </template>

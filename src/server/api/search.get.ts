@@ -6,112 +6,119 @@ import { prisma } from "@/server/libs/database";
  * Endpoint processes upload record
  * & returns expanded mapped ref object
  */
-export default defineEventHandler<SearchRequest, Promise<SearchResponse>>(async (event) => {
-  /**
-   * @see {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination}
-   */
-  const { quantity = 30, page = 1, filename = "", username } = getQuery(event);
-  // Checkout cuid API key, authorization header key for every user
-  const apikey = getRequestHeader(event, "authorization");
+export default defineEventHandler<SearchRequest, Promise<SearchResponse>>(
+  async (event) => {
+    /**
+     * @see {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination}
+     */
+    const {
+      quantity = 30,
+      page = 1,
+      filename = "",
+      username,
+    } = getQuery(event);
+    // Checkout cuid API key, authorization header key for every user
+    const apikey = getRequestHeader(event, "authorization");
 
-  if (!apikey)
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-      message: "Missing apikey authorization header.",
-    });
+    if (!apikey)
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Unauthorized",
+        message: "Missing apikey authorization header.",
+      });
 
-  const user = await prisma.authUser.findUnique({
-    where: { api_key: apikey },
-    select: {
-      id: true,
-      role: true,
-      auth_key: {
-        select: {
-          id: true,
+    const user = await prisma.authUser.findUnique({
+      where: { api_key: apikey },
+      select: {
+        id: true,
+        role: true,
+        auth_key: {
+          select: {
+            id: true,
+          },
         },
       },
-    },
-  });
-
-  if (!user)
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-      message: "Invalid credentials.",
     });
 
-  const userUsername = user.auth_key[0].id.split(":")[1];
+    if (!user)
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Unauthorized",
+        message: "Invalid credentials.",
+      });
 
-  if (username && username !== userUsername && user.role !== "ADMIN")
-    return [];
+    const userUsername = user.auth_key[0].id.split(":")[1];
 
-  const everyUser =
-    user.role === "ADMIN"
-      ? {}
-      : {
-          authorId: user.id,
-        };
+    if (username && username !== userUsername && user.role !== "ADMIN")
+      return [];
 
-  const certainUser = username
-    ? {
+    const everyUser =
+      user.role === "ADMIN"
+        ? {}
+        : {
+            authorId: user.id,
+          };
+
+    const certainUser = username
+      ? {
+          author: {
+            auth_key: {
+              some: {
+                id: `username:${username}`,
+              },
+            },
+          },
+        }
+      : {};
+
+    const upload = await prisma.upload.findMany({
+      skip: (+page - 1) * +quantity,
+      take: +quantity,
+      orderBy: {
+        created_at: "desc",
+      },
+      where: {
+        filename: {
+          contains: filename,
+        },
+        ...certainUser,
+        ...everyUser,
+      },
+      include: {
+        _count: {
+          select: {
+            views: true,
+          },
+        },
         author: {
-          auth_key: {
-            some: {
-              id: `username:${username}`,
+          select: {
+            id: true,
+            nickname: true,
+            avatar_url: true,
+            auth_key: {
+              take: 1,
+              select: {
+                id: true,
+              },
             },
           },
         },
-      }
-    : {};
+      },
+    });
 
-  const upload = await prisma.upload.findMany({
-    skip: (+page - 1) * +quantity,
-    take: +quantity,
-    orderBy: {
-      created_at: "desc",
-    },
-    where: {
-      filename: {
-        contains: filename,
-      },
-      ...certainUser,
-      ...everyUser,
-    },
-    include: {
-      _count: {
-        select: {
-          views: true,
-        },
-      },
+    return upload.map((file) => ({
+      ...file,
+      // Remove _count as unnecessary
+      _count: undefined,
+      views: file._count.views,
+      // Remove authorId as unnecessary
+      authorId: undefined,
       author: {
-        select: {
-          id: true,
-          nickname: true,
-          avatar_url: true,
-          auth_key: {
-            take: 1,
-            select: {
-              id: true,
-            },
-          },
-        },
+        id: file.author.id,
+        avatar_url: file.author.avatar_url,
+        nickname: file.author.nickname,
+        username: file.author.auth_key[0].id.split(":")[1],
       },
-    },
-  });
-
-  return upload.map((file) => ({
-    ...file,
-    // Remove _count as unnecessary
-    _count: undefined,
-    views: file._count.views,
-    // Remove authorId as unnecessary
-    authorId: undefined,
-    author: {
-      id: file.author.id,
-      avatar_url: file.author.avatar_url,
-      nickname: file.author.nickname,
-      username: file.author.auth_key[0].id.split(":")[1],
-    },
-  }));
-});
+    }));
+  },
+);

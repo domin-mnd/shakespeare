@@ -1,10 +1,5 @@
-
 <script lang="ts" setup>
-const {
-  fieldName,
-  label,
-  note,
-} = defineProps<{
+const { fieldName, label, note } = defineProps<{
   fieldName: string;
   label: string;
   note?: string;

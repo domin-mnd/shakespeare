@@ -1,6 +1,6 @@
 /**
  * ### GET `/api/search` request
- * 
+ *
  * @header Authorization
  */
 interface SearchRequest {
@@ -13,8 +13,8 @@ interface SearchRequest {
     filename?: string;
     /** Username as a filter. */
     username?: string;
-  }
-};
+  };
+}
 
 /**
  * ### GET `/api/search` success response

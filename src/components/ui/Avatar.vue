@@ -18,7 +18,7 @@ const presetLetterSize = size * 0.7 + "px";
     v-bind="$attrs"
   />
   <div v-else class="avatar preset">
-    {{ (nickname ?? "").split('')[0] }}
+    {{ (nickname ?? "").split("")[0] }}
   </div>
 </template>
 <style lang="stylus" scoped>
@@ -43,5 +43,4 @@ const presetLetterSize = size * 0.7 + "px";
     font-weight bold
     text-align center
     user-select none
-
 </style>

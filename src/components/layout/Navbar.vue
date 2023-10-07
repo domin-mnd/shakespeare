@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import Avatar from "@/components/ui/Avatar.vue";
-import { PhHouse, PhPaperPlaneTilt, PhMagnifyingGlass, PhNut } from "@phosphor-icons/vue/compact";
+import {
+  PhHouse,
+  PhPaperPlaneTilt,
+  PhMagnifyingGlass,
+  PhNut,
+} from "@phosphor-icons/vue/compact";
 
 const store = useUser();
 
@@ -82,7 +87,7 @@ const links = [
     flex-direction row
 
     width 100vw
-  
+
   @media screen and (max-width 950px)
     backdrop-filter blur(10px)
 

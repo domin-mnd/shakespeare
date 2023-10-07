@@ -31,8 +31,7 @@ export function shortener(type: ShorteningType, length: number = 4): string {
     case ShorteningType.Classic:
       return shuffler(classic, length);
     case ShorteningType.Pronounceable:
-      if (length < 3)
-        throw "Length must be at least 3 characters.";
+      if (length < 3) throw "Length must be at least 3 characters.";
       return word({ length })()[0];
     case ShorteningType.Numbers:
       return shuffler(numbers, length);

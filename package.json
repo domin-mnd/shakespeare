@@ -9,6 +9,7 @@
     "generate": "nuxi generate",
     "preview": "nuxi preview",
     "postinstall": "nuxi prepare && prisma generate",
+    "format": "prettier --write \"./src/**/*.{ts,vue}\"",
     "typecheck": "tsc --noEmit"
   },
   "prisma": {

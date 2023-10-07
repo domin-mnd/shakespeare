@@ -7,7 +7,6 @@ if (!cookie.value) {
 
 const input = ref<{ inputValue: string } | null>(null);
 const computeInput = () => input.value?.inputValue ?? "";
-
 </script>
 <template>
   <div>

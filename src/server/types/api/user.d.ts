@@ -7,7 +7,7 @@ interface LoginUserRequest extends DefaultResponse {
     username?: string;
     /** User password. */
     password?: string;
-  }
+  };
 }
 
 /**
@@ -20,7 +20,7 @@ interface LoginUserResponse extends DefaultResponse {
     session: import("lucia-auth").Session;
     /** User's api_key to save */
     apikey: string;
-  }
+  };
 }
 
 /**
@@ -59,7 +59,7 @@ interface GetUserRequest {
     username?: username;
     /** Amount of uploads to return from that user, defaults to 15 */
     quantity?: quantity;
-  }
+  };
 }
 
 /**
@@ -126,7 +126,7 @@ interface UpdateUserRequest {
     avatar_url?: string;
     /** Role to change - either "ADMIN" or "USER". */
     role?: "ADMIN" | "USER";
-  }
+  };
 }
 
 /**
@@ -146,7 +146,7 @@ interface DeleteUserRequest {
   body: {
     /** User's ID to delete. */
     userId?: string;
-  }
+  };
 }
 
 /**

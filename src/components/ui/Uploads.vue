@@ -94,9 +94,7 @@ watch(pending, () => {
   }
 });
 
-watch(filename, () => {
-  reset();
-});
+watch(filename, reset);
 
 defineExpose({ data, pending, error, refresh, execute });
 </script>

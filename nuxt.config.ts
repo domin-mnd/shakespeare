@@ -7,7 +7,12 @@ export default defineNuxtConfig({
      * Node 14-18 need polyfills, running shakespeare on edge would return an error because of including polyfills
      * @see {@link https://lucia-auth.com/start-here/getting-started?nuxt Polyfill crypto global}
      */
-    moduleSideEffects: ["lucia-auth/polyfill/node"],
+    moduleSideEffects: [
+      "lucia-auth/polyfill/node",
+      "unenv/runtime/polyfill/",
+      "node-fetch-native/polyfill",
+      "node-fetch-native/dist/polyfill",
+    ],
     preset: "vercel_edge",
   },
   typescript: {

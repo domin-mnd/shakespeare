@@ -8,7 +8,7 @@ export default defineNuxtConfig({
      * @see {@link https://lucia-auth.com/start-here/getting-started?nuxt Polyfill crypto global}
      */
     moduleSideEffects: ["lucia-auth/polyfill/node"],
-    preset: "vercel",
+    preset: "vercel_edge",
   },
   typescript: {
     strict: true,

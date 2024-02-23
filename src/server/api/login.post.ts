@@ -1,4 +1,4 @@
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { prisma } from "@/server/libs/database";
 
 /**

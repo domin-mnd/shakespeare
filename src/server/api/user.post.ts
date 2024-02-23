@@ -1,4 +1,4 @@
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { prisma } from "@/server/libs/database";
 
 /**
@@ -8,7 +8,7 @@ import { prisma } from "@/server/libs/database";
  *
  * - Validate an account that creates another user (must be ADMIN) (only if there are account records)
  * - Validate parameters & keys for creation
- * - Create the record in database via lucia-auth
+ * - Create the record in database via lucia
  * - Handle conflict error
  */
 export default defineEventHandler<

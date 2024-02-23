@@ -1,4 +1,4 @@
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { prisma } from "@/server/libs/database";
 
 /**
@@ -8,7 +8,7 @@ import { prisma } from "@/server/libs/database";
  *
  * - Validate an account that deletes another user
  * - Validate attributes
- * - Update the record attributes in database via lucia-auth & invalidate sessions
+ * - Update the record attributes in database via lucia & invalidate sessions
  * - Handle conflict error
  */
 export default defineEventHandler<

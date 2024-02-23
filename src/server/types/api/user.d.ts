@@ -17,7 +17,7 @@ interface LoginUserResponse extends DefaultResponse {
   /** Logged in user response */
   body: {
     /** Lucia session for that user */
-    session: import("lucia-auth").Session;
+    session: import("lucia").Session;
     /** User's api_key to save */
     apikey: string;
   };
@@ -31,7 +31,7 @@ interface GetProfileRequest {}
 /**
  * ### GET `/api/profile` success response
  *
- * @see {@link https://lucia-auth.com/basics/handle-requests?nuxt Handle Requests}
+ * @see {@link https://lucia.com/basics/handle-requests?nuxt Handle Requests}
  */
 interface GetProfileResponse extends DefaultResponse {
   /** User ID */
@@ -105,7 +105,7 @@ interface CreateUserResponse extends DefaultResponse {
     /** New user ID */
     id: string;
     /** Lucia session for that user */
-    session: import("lucia-auth").Session;
+    session: import("lucia").Session;
     /** User's api_key to save */
     apikey: string;
   };
@@ -134,7 +134,7 @@ interface UpdateUserRequest {
  */
 interface UpdateUserResponse extends DefaultResponse {
   /** Lucia session for the user */
-  session: import("lucia-auth").Session;
+  session: import("lucia").Session;
 }
 
 /**

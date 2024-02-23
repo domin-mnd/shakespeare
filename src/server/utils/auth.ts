@@ -1,10 +1,10 @@
-import lucia from "lucia-auth";
-import { h3 } from "lucia-auth/middleware";
-import prisma from "@lucia-auth/adapter-prisma";
+import { lucia } from "lucia";
+import { h3 } from "lucia/middleware";
+import { prisma } from "@lucia-auth/adapter-prisma";
 import { prisma as prismaClient } from "@/server/libs/database";
 
 // Polyfill crypto global
-import "lucia-auth/polyfill/node";
+import "lucia/polyfill/node";
 
 export const auth = lucia({
   adapter: prisma(prismaClient),

@@ -1,4 +1,4 @@
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { prisma } from "@/server/libs/database";
 
 /**
@@ -7,7 +7,7 @@ import { prisma } from "@/server/libs/database";
  * Endpoint processes 2 steps of validation & then handling record deletion:
  *
  * - Validate an account that deletes another user
- * - Delete the record in database via lucia-auth
+ * - Delete the record in database via lucia
  * - Handle conflict error
  */
 export default defineEventHandler<

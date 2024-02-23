@@ -1,10 +1,10 @@
 import { prisma } from "@/server/libs/database";
 
 /**
- * ## Validate user via lucia-auth
+ * ## Validate user via lucia
  *
  * Validates the caller user, then returns
- * the userId validated by lucia-auth,
+ * the userId validated by lucia,
  * also returns whether any users are registered.
  *
  * @see {@link https://github.com/pilcrowOnPaper/lucia/blob/main/examples/nuxt/server/api/user.get.ts Example}

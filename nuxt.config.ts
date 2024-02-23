@@ -13,7 +13,7 @@ export default defineNuxtConfig({
       // "node-fetch-native/polyfill",
       // "node-fetch-native/dist/polyfill",
     ],
-    preset: "vercel_edge",
+    preset: "vercel",
   },
   typescript: {
     strict: true,

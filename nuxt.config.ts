@@ -10,8 +10,8 @@ export default defineNuxtConfig({
     moduleSideEffects: [
       "lucia/polyfill/node",
       "unenv/runtime/polyfill/",
-      "node-fetch-native/polyfill",
-      "node-fetch-native/dist/polyfill",
+      // "node-fetch-native/polyfill",
+      // "node-fetch-native/dist/polyfill",
     ],
     preset: "vercel_edge",
   },

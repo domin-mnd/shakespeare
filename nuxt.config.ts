@@ -2,16 +2,20 @@
 export default defineNuxtConfig({
   srcDir: "src/",
   pages: true,
+
   nitro: {
     preset: "vercel",
   },
+
   typescript: {
     strict: true,
   },
+
   modules: [
     // Helmet & rate limiting
     "nuxt-security",
   ],
+
   security: {
     headers: {
       xXSSProtection: "1",
@@ -23,6 +27,7 @@ export default defineNuxtConfig({
     },
     corsHandler: false,
   },
+
   routeRules: {
     "/api/files": {
       security: {
@@ -30,6 +35,7 @@ export default defineNuxtConfig({
       },
     },
   },
+
   vite: {
     css: {
       preprocessorOptions: {
@@ -40,6 +46,7 @@ export default defineNuxtConfig({
       },
     },
   },
+
   app: {
     pageTransition: {
       name: "page",
@@ -50,7 +57,10 @@ export default defineNuxtConfig({
       mode: "out-in",
     },
   },
+
   experimental: {
     payloadExtraction: false,
   },
+
+  compatibilityDate: "2024-07-22",
 });

@@ -19,13 +19,13 @@
     "@types/pg": "8.11.6",
     "korob": "0.2.1",
     "kysely-codegen": "0.15.0",
-    "nuxt": "3.7.4",
-    "nuxt-security": "0.13.1",
+    "nuxt": "3.12.4",
+    "nuxt-security": "2.0.0-rc.9",
     "stylus": "0.63.0"
   },
   "dependencies": {
-    "@fontsource-variable/manrope": "5.0.13",
-    "@phosphor-icons/vue": "2.1.6",
+    "@fontsource-variable/manrope": "5.0.20",
+    "@phosphor-icons/vue": "2.2.1",
     "chart.js": "4.4.3",
     "kysely": "0.27.4",
     "minio": "7.1.3",

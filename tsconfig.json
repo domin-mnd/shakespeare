@@ -1,7 +1,5 @@
 {
   /** @see {@link https://nuxt.com/docs/guide/concepts/typescript TypeScript} */
   "extends": "./.nuxt/tsconfig.json",
-  "compilerOptions": {
-    "moduleResolution": "nodenext",
-  },
+  "compilerOptions": {}
 }

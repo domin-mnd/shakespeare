@@ -1,6 +1,5 @@
-import { Prisma } from "@prisma/client";
-import { prisma } from "@/server/libs/database";
 import { ShorteningType } from "@/server/libs/constants";
+import { db } from "~/database";
 
 /**
  * ## File upload endpoint.
@@ -19,10 +18,31 @@ import { ShorteningType } from "@/server/libs/constants";
 export default defineEventHandler<
   CreateFileRequest,
   Promise<CreateFileResponse>
->(async (event) => {
+>(async event => {
   const { type, length } = getQuery(event);
   // Checkout cuid API key, authorization header key for every user
-  const apikey = getRequestHeader(event, "authorization");
+  const apikey = getHeader(event, "authorization");
+
+  if (apikey === undefined)
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
+    });
+
+  const user = await db
+    .selectFrom("auth_user")
+    .where("api_key", "=", apikey)
+    .select("id")
+    .executeTakeFirst();
+
+  if (user === undefined)
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
+    });
+
   const contentType = getRequestHeader(event, "content-type");
 
   if (!contentType?.includes("multipart/form-data"))
@@ -32,27 +52,8 @@ export default defineEventHandler<
       message: "Non multipart/form-data not allowed.",
     });
 
-  if (!apikey)
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-      message: "Missing apikey authorization header.",
-    });
-
-  const user = await prisma.authUser.findUnique({
-    where: { api_key: apikey },
-    select: { id: true },
-  });
-
-  if (!user)
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-      message: "Invalid credentials.",
-    });
-
   // Enum type of shortening
-  let shorteningType: ShorteningType = ShorteningType.Classic;
+  const shorteningType: ShorteningType = ShorteningType.Classic;
 
   const types = {
     classic: ShorteningType.Classic,
@@ -61,7 +62,7 @@ export default defineEventHandler<
   };
 
   // Define custom filename with custom settings
-  const filename = shortener(
+  let filename = shortener(
     (type && types[type]) ?? shorteningType,
     +(length ?? 4),
   );
@@ -74,18 +75,38 @@ export default defineEventHandler<
     });
 
   try {
+    for (let i = 0; i < 5; i++) {
+      const value = await db
+        .selectFrom("upload")
+        .where("filename", "=", filename)
+        .select("id")
+        .executeTakeFirst();
+      if (value !== undefined) {
+        filename = shortener(
+          (type && types[type]) ?? shorteningType,
+          +(length ?? 4),
+        );
+      } else {
+        break;
+      }
+
+      if (i === 4) {
+        throw new FileError(FileErrorMessage.FileAlreadyExists);
+      }
+    }
+
     await streamFilesToSimpleStorage(event, filename, user.id);
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      // The .code property can be accessed in a type-safe manner
-      if (error.code === "P2002") {
-        throw createError({
-          statusCode: 409,
-          statusMessage: "Conflict",
-          message:
-            "File name already exists in the database, reupload it via the client!",
-        });
-      }
+    if (
+      error instanceof FileError &&
+      error.message === FileErrorMessage.FileAlreadyExists
+    ) {
+      throw createError({
+        statusCode: 409,
+        statusMessage: "Conflict",
+        message:
+          "File name already exists in the database, reupload it via the client!",
+      });
     } else {
       console.error(error);
       throw createError({
@@ -98,5 +119,7 @@ export default defineEventHandler<
   }
 
   // ShareX needs a link to the file
-  return `${getRequestProtocol(event)}://${getRequestHost(event)}/${filename}`;
+  return `${getRequestProtocol(event)}://${getRequestHost(
+    event,
+  )}/${filename}`;
 });

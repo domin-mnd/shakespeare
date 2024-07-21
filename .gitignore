@@ -5,6 +5,10 @@ node_modules
 .cache
 .output
 .vercel
+.korob
 .env
 dist
 .DS_Store
+.prettierignore
+.prettierrc.json
+biome.json

@@ -1,17 +1,20 @@
-import { prisma } from "@/server/libs/database";
+import { db } from "~/database";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async event => {
   const media = getRouterParam(event, "media");
 
-  const url = await prisma.upload.findFirst({
-    where: {
-      filename: media,
-    },
-    select: {
-      path: true,
-      mimetype: true,
-    },
-  });
+  if (!media)
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Not Found",
+      message: "File not found.",
+    });
+
+  const url = await db
+    .selectFrom("upload")
+    .where("filename", "=", media)
+    .select(["path", "mimetype"])
+    .executeTakeFirst();
 
   if (!url?.path || !url?.mimetype)
     throw createError({

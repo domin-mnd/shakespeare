@@ -1,5 +1,4 @@
-import { LuciaError } from "lucia-auth";
-import { prisma } from "@/server/libs/database";
+import { db } from "@/database";
 
 /**
  * ## User deletion
@@ -7,13 +6,13 @@ import { prisma } from "@/server/libs/database";
  * Endpoint processes 2 steps of validation & then handling record deletion:
  *
  * - Validate an account that deletes another user
- * - Delete the record in database via lucia-auth
+ * - Delete the record in database via deleteUser()
  * - Handle conflict error
  */
 export default defineEventHandler<
   DeleteUserRequest,
   Promise<DeleteUserResponse>
->(async (event) => {
+>(async event => {
   const body = await readBody(event);
   const apikey = getRequestHeader(event, "authorization");
 
@@ -35,17 +34,18 @@ export default defineEventHandler<
       message: "Missing required key - userId.",
     });
 
-  if (typeof userId !== "string")
+  if (typeof userId !== "number")
     throw createError({
       statusCode: 400,
       statusMessage: "Bad Request",
-      message: "userId must be a string.",
+      message: "userId must be a number.",
     });
 
-  const user = await prisma.authUser.findUnique({
-    where: { api_key: apikey },
-    select: { id: true, role: true },
-  });
+  const user = await db
+    .selectFrom("auth_user")
+    .where("api_key", "=", apikey)
+    .select(["id", "role"])
+    .executeTakeFirst();
 
   if (!user || (user?.role !== "ADMIN" && user?.id !== userId))
     throw createError({
@@ -55,11 +55,11 @@ export default defineEventHandler<
     });
 
   try {
-    await auth.deleteUser(userId);
+    await deleteUser(userId);
   } catch (error) {
     if (
-      error instanceof LuciaError &&
-      error.message === "AUTH_INVALID_USER_ID"
+      error instanceof AuthError &&
+      error.message === AuthErrorMessage.InvalidId
     ) {
       throw createError({
         statusCode: 400,

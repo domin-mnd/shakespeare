@@ -1,4 +1,4 @@
-import { prisma } from "@/server/libs/database";
+import { db } from "@/database";
 
 /**
  * ## Get user by its username
@@ -6,64 +6,60 @@ import { prisma } from "@/server/libs/database";
  * Validates the caller user, then returns
  * the user found by the username body parameter
  */
-export default defineEventHandler<GetUserRequest, Promise<GetUserResponse>>(
-  async (event) => {
-    const { username } = getQuery(event);
-    const apikey = getRequestHeader(event, "authorization");
+export default defineEventHandler<
+  GetUserRequest,
+  Promise<GetUserResponse>
+>(async event => {
+  const { username } = getQuery(event);
 
-    if (!apikey)
-      throw createError({
-        statusCode: 401,
-        statusMessage: "Unauthorized",
-        message: "Missing required header - authorization.",
-      });
-
-    // Validate required data
-    if (!username)
-      throw createError({
-        statusCode: 400,
-        statusMessage: "Bad Request",
-        message: "Missing required key - username.",
-      });
-
-    const caller = await prisma.authUser.findUnique({
-      where: { api_key: apikey },
-      select: { id: true },
+  // Validate required data
+  if (!username)
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Bad Request",
+      message: "Missing required key - username.",
     });
 
-    if (!caller)
-      throw createError({
-        statusCode: 401,
-        statusMessage: "Unauthorized",
-        message: "Invalid credentials.",
-      });
+  const caller = await validate(event);
 
-    // auth.getUser() requires userId, not username
-    const user = await prisma.authKey.findUnique({
-      // Single auth type therefore it is needed to prepend username:
-      where: { id: `username:${username}` },
-      select: {
-        id: true,
-        auth_user: {
-          select: {
-            id: true,
-            nickname: true,
-            avatar_url: true,
-          },
-        },
-      },
+  if (caller === undefined)
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized",
+      message: "Invalid credentials.",
     });
 
-    if (!user)
-      throw createError({
-        statusCode: 404,
-        statusMessage: "Not Found",
-        message: "User not found.",
-      });
+  const user = await db
+    .selectFrom("auth_key")
+    .where("username", "=", username)
+    .select(({ selectFrom }) => [
+      "username",
+      selectFrom("auth_user")
+        .whereRef("auth_key.user_id", "=", "auth_user.id")
+        .select("id")
+        .as("id"),
+      selectFrom("auth_user")
+        .whereRef("auth_key.user_id", "=", "auth_user.id")
+        .select("nickname")
+        .as("nickname"),
+      selectFrom("auth_user")
+        .whereRef("auth_key.user_id", "=", "auth_user.id")
+        .select("avatar_url")
+        .as("avatar_url"),
+    ])
+    .executeTakeFirst();
 
-    return {
-      username: user.id.split(":")[1],
-      ...user.auth_user,
-    };
-  },
-);
+  if (!user)
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Not Found",
+      message: "User not found.",
+    });
+
+  return {
+    id: user.id as number,
+    username: user.username,
+    nickname: user.nickname ?? null,
+    avatar_url: user.avatar_url ?? null,
+  };
+});

@@ -16,8 +16,8 @@ interface LoginUserRequest extends DefaultResponse {
 interface LoginUserResponse extends DefaultResponse {
   /** Logged in user response */
   body: {
-    /** Lucia session for that user */
-    session: import("lucia-auth").Session;
+    /** Session for that user */
+    session: Session;
     /** User's api_key to save */
     apikey: string;
   };
@@ -30,12 +30,10 @@ interface GetProfileRequest {}
 
 /**
  * ### GET `/api/profile` success response
- *
- * @see {@link https://lucia-auth.com/basics/handle-requests?nuxt Handle Requests}
  */
 interface GetProfileResponse extends DefaultResponse {
   /** User ID */
-  userId?: string;
+  userId?: number;
   body: {
     /** nickname may not be set so it will be null */
     nickname?: string | null;
@@ -56,9 +54,9 @@ interface GetProfileResponse extends DefaultResponse {
 interface GetUserRequest {
   query: {
     /** User username (not nickname). */
-    username?: username;
+    username?: string;
     /** Amount of uploads to return from that user, defaults to 15 */
-    quantity?: quantity;
+    quantity?: number;
   };
 }
 
@@ -67,7 +65,7 @@ interface GetUserRequest {
  */
 interface GetUserResponse {
   /** User ID */
-  id: string;
+  id: number;
   /** User Nickname, can be null */
   nickname: string | null;
   /** User avatar, can be null */
@@ -103,9 +101,9 @@ interface CreateUserResponse extends DefaultResponse {
   /** New user response */
   body: {
     /** New user ID */
-    id: string;
-    /** Lucia session for that user */
-    session: import("lucia-auth").Session;
+    id: number;
+    /** Session for that user */
+    session: Session;
     /** User's api_key to save */
     apikey: string;
   };
@@ -119,7 +117,7 @@ interface CreateUserResponse extends DefaultResponse {
 interface UpdateUserRequest {
   body: {
     /** User's ID to delete. */
-    userId?: string;
+    userId?: number;
     /** Nickname to change. */
     nickname?: string;
     /** Avatar URL to change. */
@@ -132,10 +130,7 @@ interface UpdateUserRequest {
 /**
  * ### PUT `/api/user` success response
  */
-interface UpdateUserResponse extends DefaultResponse {
-  /** Lucia session for the user */
-  session: import("lucia-auth").Session;
-}
+interface UpdateUserResponse extends DefaultResponse {}
 
 /**
  * ### DELETE `/api/user` request
@@ -145,7 +140,7 @@ interface UpdateUserResponse extends DefaultResponse {
 interface DeleteUserRequest {
   body: {
     /** User's ID to delete. */
-    userId?: string;
+    userId?: number;
   };
 }
 

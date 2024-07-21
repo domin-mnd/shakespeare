@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { Line } from "vue-chartjs";
 import {
-  Chart as ChartJS,
-  Tooltip,
   CategoryScale,
+  Chart as ChartJS,
+  LineElement,
   LinearScale,
   PointElement,
-  LineElement,
+  Tooltip,
 } from "chart.js";
+import { Line } from "vue-chartjs";
 ChartJS.register(
   Tooltip,
   LineElement,
@@ -20,19 +20,27 @@ const { username } = defineProps<{
   username: string;
 }>();
 
-const weekDays: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const weekDays: string[] = [
+  "Mon",
+  "Tue",
+  "Wed",
+  "Thu",
+  "Fri",
+  "Sat",
+  "Sun",
+];
 
 const date = new Date();
-date.setHours(0);
-date.setMinutes(0);
-date.setSeconds(0);
-date.setMilliseconds(0);
-// I hate it when week starts with sunday
-const getISODay = (date: Date) => (date.getDay() + 6) % 7;
+date.setUTCHours(0, 0, 0, 0);
 
-const first = date.setDate(date.getDate() - getISODay(date));
-let gte = new Date(first).toISOString();
-let lte = new Date(date.setDate(new Date(first).getDate() + 6)).toISOString();
+// I hate it when week starts with sunday
+const getISODay = (date: Date) => (date.getUTCDay() + 6) % 7;
+
+const first = date.setUTCDate(date.getUTCDate() - getISODay(date));
+const gte = new Date(first);
+const lt = new Date(
+  date.setUTCDate(new Date(first).getUTCDate() + 7),
+);
 
 const cookie = useCookie("api_key");
 
@@ -41,12 +49,9 @@ if (!cookie.value) {
 }
 
 const { data, error } = await useFetch("/api/views", {
-  headers: {
-    Authorization: cookie.value as string,
-  },
   params: {
-    gte,
-    lte,
+    gte: gte.toUTCString(),
+    lt: lt.toUTCString(),
     username,
   },
 });
@@ -62,7 +67,7 @@ if (error.value) {
 // This one starts with sunday and ends with saturday but we will shift it
 const weekData: number[] = [0, 0, 0, 0, 0, 0, 0];
 
-for (let upload of data?.value ?? []) {
+for (const upload of data?.value ?? []) {
   weekData[new Date(upload.created_at).getDay()] += 1;
 }
 

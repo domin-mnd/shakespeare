@@ -1,5 +1,4 @@
-import { LuciaError } from "lucia-auth";
-import { prisma } from "@/server/libs/database";
+import { db } from "~/database";
 
 /**
  * ## User attribute updates
@@ -8,21 +7,21 @@ import { prisma } from "@/server/libs/database";
  *
  * - Validate an account that deletes another user
  * - Validate attributes
- * - Update the record attributes in database via lucia-auth & invalidate sessions
+ * - Update the record attributes in database via updateUser()
  * - Handle conflict error
  */
 export default defineEventHandler<
   UpdateUserRequest,
   Promise<UpdateUserResponse>
->(async (event) => {
+>(async event => {
   const body = await readBody(event);
-  const apikey = getRequestHeader(event, "authorization");
+  const session = await validate(event);
 
-  if (!apikey)
+  if (session === undefined)
     throw createError({
       statusCode: 401,
       statusMessage: "Unauthorized",
-      message: "Missing required header - authorization.",
+      message: "Invalid credentials.",
     });
 
   // Required keys
@@ -43,10 +42,11 @@ export default defineEventHandler<
       message: "userId must be a string.",
     });
 
-  const user = await prisma.authUser.findUnique({
-    where: { api_key: apikey },
-    select: { id: true, role: true },
-  });
+  const user = await db
+    .selectFrom("auth_user")
+    .where("id", "=", session.userId)
+    .select(["id", "role"])
+    .executeTakeFirst();
 
   if (!user || (user?.role !== "ADMIN" && user?.id !== userId))
     throw createError({
@@ -76,7 +76,11 @@ export default defineEventHandler<
       message: "avatar_url isn't type of string.",
     });
 
-  if (role !== "ADMIN" && role !== "USER" && typeof role !== "undefined")
+  if (
+    role !== "ADMIN" &&
+    role !== "USER" &&
+    typeof role !== "undefined"
+  )
     throw createError({
       statusCode: 400,
       statusMessage: "Bad Request",
@@ -90,32 +94,23 @@ export default defineEventHandler<
       message: "Own role cannot be promoted to ADMIN.",
     });
 
-  const partialUserAttributes = {
+  const payload = {
     nickname: body.nickname,
     avatar_url: body.avatar_url,
     role,
   };
 
   try {
-    const updatedUser = await auth.updateUserAttributes(
-      userId,
-      partialUserAttributes,
-    );
-
-    await auth.invalidateAllUserSessions(updatedUser.userId);
-    const session = await auth.createSession(updatedUser.userId);
-    const cookie = auth.createSessionCookie(session).serialize();
-    setHeader(event, "Set-Cookie", cookie);
+    await updateUser(userId, payload);
 
     return {
       statusCode: 200,
       statusMessage: "OK",
-      session,
     };
   } catch (error) {
     if (
-      error instanceof LuciaError &&
-      error.message === "AUTH_INVALID_USER_ID"
+      error instanceof AuthError &&
+      error.message === AuthErrorMessage.InvalidId
     ) {
       throw createError({
         statusCode: 400,

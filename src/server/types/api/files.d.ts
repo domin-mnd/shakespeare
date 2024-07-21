@@ -12,13 +12,20 @@ interface GetFileRequest {
  * ### GET `/api/files` success response
  */
 type GetFileResponse = Omit<
-  import("@prisma/client").Upload,
-  "authorId" | "path"
+  import("kysely-codegen").Upload,
+  "author_id" | "path" | "created_at" | "id"
 > & {
+  /** File upload date */
+  created_at: Date;
+  /** File id */
+  id: number;
   /** Elevated counted views for the upload */
   views: number;
   /** Upload author */
-  author: Omit<import("@prisma/client").AuthUser, "api_key" | "role"> & {
+  author: Omit<
+    import("kysely-codegen").AuthUser,
+    "api_key" | "role" | "id"
+  > & {
     username: string;
   };
 };
@@ -58,5 +65,5 @@ interface DeleteFileRequest {
  */
 interface DeleteFileResponse extends DefaultResponse {
   /** Metadata response from S3 */
-  body: void;
+  result: true;
 }

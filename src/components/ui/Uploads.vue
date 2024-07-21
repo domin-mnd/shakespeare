@@ -20,9 +20,8 @@ if (!cookie.value) {
 const filename = computed<string>(() => rawFilename());
 const page = ref(rawPage);
 
-const { data, pending, error, refresh, execute, status } = await useFetch(
-  "/api/search",
-  {
+const { data, pending, error, refresh, execute, status } =
+  await useFetch("/api/search", {
     headers: {
       Authorization: cookie.value as string,
     },
@@ -33,8 +32,7 @@ const { data, pending, error, refresh, execute, status } = await useFetch(
       filename,
     },
     server: false,
-  },
-);
+  });
 
 if (error.value) throw createError(error.value);
 
@@ -44,7 +42,7 @@ let initiallyLoaded = false;
 // Via state
 let loadMore: boolean = false;
 
-let posts = ref(data.value ?? []);
+const posts = ref(data.value ?? []);
 
 watch(data, () => {
   if (!initiallyLoaded) {
@@ -57,8 +55,9 @@ async function onScroll(event: Event) {
 
   // Ignore million onScroll calls when the value is already incremented
   if (
-    Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) <
-      400 &&
+    Math.abs(
+      element.scrollHeight - element.scrollTop - element.clientHeight,
+    ) < 400 &&
     !loadMore
   ) {
     loadMore = true;
@@ -129,7 +128,7 @@ defineExpose({ data, pending, error, refresh, execute });
   <div v-if="!data?.length && !pending && !(posts ?? []).length">
     <slot name="no-posts">
       <span class="center">
-        No posts over here.{{ " " }}
+        No posts over here. {{ " " }}
         <NuxtLink to="/upload" class="link">Make one</NuxtLink>! 🌎
       </span>
     </slot>

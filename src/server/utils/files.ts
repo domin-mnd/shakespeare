@@ -1,6 +1,6 @@
-import { prisma } from "@/server/libs/database";
-import { Client } from "minio";
 import type { H3Event } from "h3";
+import { Client } from "minio";
+import { db } from "~/database";
 
 // Handle environment variables
 // Deconstructing environment variables is not necessary
@@ -21,11 +21,22 @@ const client = new Client({
   region: process.env.S3_REGION,
 });
 
+export enum FileErrorMessage {
+  FileAlreadyExists = "File already exists.",
+}
+
+export class FileError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "FileError";
+  }
+}
+
 export async function streamFilesToSimpleStorage(
   event: H3Event,
   slug: string,
-  userId: string,
-): Promise<any> {
+  userId: number,
+): Promise<unknown[]> {
   const form = await readMultipartFormData(event);
 
   if (!form) {
@@ -67,29 +78,31 @@ export async function streamFilesToSimpleStorage(
     },
   );
 
-  const databaseResponse = prisma.upload.create({
-    data: {
+  const databaseResponse = db
+    .insertInto("upload")
+    .values({
       filename: slug,
       mimetype: type,
       extension,
+      created_at: new Date(),
       path: `${getSimpleStorageURL()}/${newFilename}`,
-      authorId: userId,
+      author_id: userId,
       type: "FILE",
-    },
-  });
+    })
+    .execute();
 
   return Promise.all([uploadResponse, databaseResponse]);
 }
 
 export const deleteFileFromSimpleStorage = async (
   filename: string,
-): Promise<void | null> => {
+): Promise<true | null> => {
   try {
-    const response = await client.removeObject(
+    await client.removeObject(
       process.env.S3_BUCKET_NAME as string,
       filename,
     );
-    return response;
+    return true;
   } catch (error) {
     console.error(error);
     return null;

@@ -3,7 +3,9 @@ const { data } = await useFetch("/api/profile");
 
 if (!data.value) throw createError("Failed to fetch data");
 
-if (data.value.userId || data.value.usersExist) navigateTo("/login");
+if (data.value.userId || data.value.usersExist) {
+  await navigateTo("/login");
+}
 
 definePageMeta({
   layout: "client",
@@ -94,7 +96,10 @@ function validatePassword(password: string) {
   return true;
 }
 
-function validatePasswordConfirm(password: string, passwordConfirm: string) {
+function validatePasswordConfirm(
+  password: string,
+  passwordConfirm: string,
+) {
   if (password !== passwordConfirm) {
     passwordConfirmTooltip.label = passwordConfirmErrors[0];
     passwordConfirmTooltip.show = true;
@@ -123,12 +128,15 @@ async function register(event: Event) {
 
   // Set loading state
   loading.show = true;
-  const { data: response, error: errorResponse } = await useFetch("/api/user", {
-    method: "POST",
-    // In data we provide `avatar` key that's not read there (`avatar_url` is),
-    // so that we will provide it on update from upload
-    body: JSON.stringify({ ...data, role: "ADMIN" }),
-  });
+  const { data: response, error: errorResponse } = await useFetch(
+    "/api/user",
+    {
+      method: "POST",
+      // In data we provide `avatar` key that's not read there (`avatar_url` is),
+      // so that we will provide it on update from upload
+      body: JSON.stringify({ ...data, role: "ADMIN" }),
+    },
+  );
 
   if (errorResponse.value) {
     loading.show = false;
@@ -139,7 +147,8 @@ async function register(event: Event) {
       return;
     }
 
-    error.title = errorResponse.value?.data.statusMessage ?? "An error occured";
+    error.title =
+      errorResponse.value?.data.statusMessage ?? "An error occured";
     error.content =
       errorResponse.value?.data.message ??
       "An unknown error has occured. Please consider checking console output for more information.";
@@ -157,7 +166,8 @@ async function register(event: Event) {
 
   apiKeyCookie.value = successResult.body.apikey;
 
-  if (!(data.avatar as File).name && !data.avatarUrl) return navigateTo("/");
+  if (!(data.avatar as File).name && !data.avatarUrl)
+    return navigateTo("/");
 
   loading.state = "Uploading avatar...";
 
@@ -179,21 +189,20 @@ async function register(event: Event) {
     fileFormData.append("media", file);
   }
 
-  const { data: fileResponse, error: errorFileResponse } = await useFetch(
-    "/api/files",
-    {
+  const { data: fileResponse, error: errorFileResponse } =
+    await useFetch("/api/files", {
       method: "POST",
       headers: {
         authorization: successResult.body.apikey,
       },
       body: fileFormData,
-    },
-  );
+    });
 
   if (errorFileResponse.value?.statusCode) {
     loading.show = false;
     error.title =
-      errorFileResponse.value?.data.statusMessage ?? "An error occured";
+      errorFileResponse.value?.data.statusMessage ??
+      "An error occured";
     error.content =
       errorFileResponse.value?.data.message ??
       "An unknown error has occured. Please consider checking console output for more information.";
@@ -201,8 +210,9 @@ async function register(event: Event) {
     return navigateTo("/");
   }
 
-  data.avatarUrl =
-    (fileResponse.value as string).split(window.location.host)[1] + "/raw";
+  data.avatarUrl = `${
+    (fileResponse.value as string).split(window.location.host)[1]
+  }/raw`;
 
   loading.state = "Assigning avatar...";
   const { error: errorUpdateResponse } = await useFetch("/api/user", {
@@ -219,7 +229,8 @@ async function register(event: Event) {
   loading.show = false;
   if (errorUpdateResponse.value?.statusCode) {
     error.title =
-      errorUpdateResponse.value?.data.statusMessage ?? "An error occured";
+      errorUpdateResponse.value?.data.statusMessage ??
+      "An error occured";
     error.content =
       errorUpdateResponse.value?.data.message ??
       "An unknown error has occured. Please consider checking console output for more information.";

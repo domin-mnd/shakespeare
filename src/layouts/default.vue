@@ -1,16 +1,14 @@
 <script lang="ts" setup>
 /**
  * @see {@link https://cdn.domin.pro/8ZVV Scheme}
- * @see {@link https://github.com/pilcrowOnPaper/lucia/blob/main/examples/nuxt/pages/index.vue Example}
  */
-
 const { data } = await useFetch("/api/profile");
 
 if (!data.value) throw createError("Failed to fetch data");
 
 if (!data.value?.userId) {
-  if (!data.value.usersExist) await navigateTo("/register");
-  else await navigateTo("/login");
+  if (data.value.usersExist) await navigateTo("/login");
+  else await navigateTo("/register");
 }
 
 const store = useUser();

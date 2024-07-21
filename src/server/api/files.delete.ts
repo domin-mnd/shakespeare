@@ -1,4 +1,4 @@
-import { prisma } from "@/server/libs/database";
+import { db } from "~/database";
 
 /**
  * ## File deletion endpoint.
@@ -15,22 +15,22 @@ import { prisma } from "@/server/libs/database";
 export default defineEventHandler<
   DeleteFileRequest,
   Promise<DeleteFileResponse>
->(async (event) => {
+>(async event => {
   const body = await readBody(event);
-  // Checkout cuid API key, authorization header key for every user
-  const apikey = getRequestHeader(event, "authorization");
+  const session = await validate(event);
 
-  if (!apikey)
+  if (session === undefined)
     throw createError({
       statusCode: 401,
       statusMessage: "Unauthorized",
-      message: "Missing apikey authorization header.",
+      message: "Invalid credentials.",
     });
 
-  const user = await prisma.authUser.findUnique({
-    where: { api_key: apikey },
-    select: { id: true, role: true },
-  });
+  const user = await db
+    .selectFrom("auth_user")
+    .where("id", "=", session.userId)
+    .select(["id", "role"])
+    .executeTakeFirst();
 
   if (!user)
     throw createError({
@@ -45,15 +45,17 @@ export default defineEventHandler<
     throw createError({
       statusCode: 400,
       statusMessage: "Bad Request",
-      message: "Missing required type of filename key in body - string.",
+      message:
+        "Missing required type of filename key in body - string.",
     });
 
-  const file = await prisma.upload.findUnique({
-    where: { filename },
-    select: { authorId: true },
-  });
+  const file = await db
+    .selectFrom("upload")
+    .where("filename", "=", filename)
+    .select("author_id")
+    .executeTakeFirst();
 
-  if (!file)
+  if (file === undefined)
     throw createError({
       statusCode: 404,
       statusMessage: "Not Found",
@@ -61,7 +63,7 @@ export default defineEventHandler<
     });
 
   // Check for permissions
-  if (file.authorId !== user.id || user.role !== "ADMIN")
+  if (file.author_id !== user.id || user.role !== "ADMIN")
     throw createError({
       statusCode: 401,
       statusMessage: "Unauthorized",
@@ -72,7 +74,7 @@ export default defineEventHandler<
   const deleteResponse = await deleteFileFromSimpleStorage(filename);
 
   // Returns null if an error occured
-  if (!deleteResponse)
+  if (deleteResponse === null)
     throw createError({
       statusCode: 500,
       statusMessage: "Internal Server Error",
@@ -83,9 +85,10 @@ export default defineEventHandler<
   try {
     // I could make it not awaiting the upload
     // but it depends on the database
-    await prisma.upload.delete({
-      where: { filename },
-    });
+    await db
+      .deleteFrom("upload")
+      .where("filename", "=", filename)
+      .execute();
   } catch (error) {
     console.error(error);
     throw createError({
@@ -99,6 +102,6 @@ export default defineEventHandler<
   return {
     statusCode: 200,
     statusMessage: "OK",
-    body: deleteResponse,
+    result: deleteResponse,
   };
 });

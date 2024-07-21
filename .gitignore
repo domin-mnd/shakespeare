@@ -12,3 +12,4 @@ dist
 .prettierignore
 .prettierrc.json
 biome.json
+.vercel
